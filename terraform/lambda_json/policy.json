@@ -20,8 +20,7 @@
                 "ssm:GetParametersByPath"
             ],
             "Resource": [
-                "arn:aws:ssm:${region}:${account_id}:parameter/{parameter_tbd}",
-                "arn:aws:ssm:${region}:${account_id}:parameter/{parameter_tbd}"
+                "arn:aws:ssm:${region}:${account_id}:parameter/Google-Data-To-Splunk/credentials"   
             ]
         }
     ]

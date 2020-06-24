@@ -1,3 +1,7 @@
+data "aws_ssm_parameter" "google_credentials" {
+  name = "/Google-Data-To-Splunk/credentials"
+}
+
 resource "aws_lambda_function" "send_ggroup_data_to_splunk" {
   filename         = var.lambda_zip_location
   source_code_hash = filebase64sha256(var.lambda_zip_location)
@@ -8,6 +12,12 @@ resource "aws_lambda_function" "send_ggroup_data_to_splunk" {
   timeout          = var.lambda_timeout
   memory_size      = var.lambda_memory
 
+  environment = {
+      variables= {
+          CREDENTIALS = aws_ssm_parameter.google_credentials
+      }
+  }
+        
   tags = {
     Service       = var.Service
     Environment   = var.Environment
