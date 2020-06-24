@@ -1,0 +1,5 @@
+Pipfile
+Pipfile.lock
+.mypy*
+.pytest*
+credentials.json
