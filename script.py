@@ -1,10 +1,11 @@
+import json
 import os
 
 # from pprint import pprint
 from typing import Optional
 
 import boto3  # type: ignore
-import googleapiclient.discovery
+import googleapiclient.discovery  # type: ignore
 from google.oauth2 import service_account  # type: ignore
 
 client = boto3.client("ssm")
@@ -33,3 +34,6 @@ credentials = service_account.Credentials.from_service_account_file(
 )
 
 
+groups = googleapiclient.discovery.build(
+    "groupssettings", "v1", credentials=credentials,
+)
