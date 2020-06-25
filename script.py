@@ -32,7 +32,7 @@ def get_credentials_file(CREDENTIALS: Optional[str]) -> str:
     return "credentials.json"
 
 
-def create_client(
+def create_admin_client(
     SERVICE_ACCOUNT_FILE: str, scope: List[str], subject: str, pageToken: str = None
 ) -> str:
     client = boto3.client("ssm")
@@ -47,16 +47,29 @@ def create_client(
     return client
 
 
+def create_groups_client(
+    SERVICE_ACCOUNT_FILE: str, scope: List[str], subject: str, pageToken: str = None
+) -> str:
+    client = boto3.client("ssm")
+    credentials = service_account.Credentials.from_service_account_file(
+        SERVICE_ACCOUNT_FILE, scopes=scope, subject=subject,
+    )
+
+    client = googleapiclient.discovery.build(
+        "groupssettings", "v1", credentials=credentials
+    )
+
+    return client
+
+
 def build_group_dict():
-    response = create_client(
+    response = create_admin_client(
         get_credentials_file(get_env_var("CREDENTIALS")),
         get_scope(get_env_var("SCOPES")),
         get_subject_email(get_env_var("SUBJECT")),
     )
-
     group_ids = {}
-
-    NextPageToken = "firstPage"
+    NextPageToken = "one"
     PageToken = None
 
     while NextPageToken:
@@ -82,3 +95,17 @@ def build_group_dict():
                     group_id = r["id"]
                     group_ids[group_names] = group_id
     return group_ids
+
+
+def get_group_info(groups):
+    response = create_groups_client(
+        get_credentials_file(get_env_var("CREDENTIALS")),
+        get_scope(get_env_var("SCOPES")),
+        get_subject_email(get_env_var("SUBJECT")),
+    )
+    service = response.groups().get(groupUniqueId=groups).execute()
+
+    return service
+
+
+pprint(get_group_info("00kgcv8k30dto6i"))
