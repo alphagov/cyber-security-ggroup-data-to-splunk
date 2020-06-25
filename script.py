@@ -32,7 +32,9 @@ def get_credentials_file(CREDENTIALS: Optional[str]) -> str:
     return "credentials.json"
 
 
-def get_groups(SERVICE_ACCOUNT_FILE: str, scope: List[str], subject: str) -> str:
+def create_client(
+    SERVICE_ACCOUNT_FILE: str, scope: List[str], subject: str, pageToken: str = None
+) -> str:
     client = boto3.client("ssm")
     credentials = service_account.Credentials.from_service_account_file(
         SERVICE_ACCOUNT_FILE, scopes=scope, subject=subject,
@@ -42,17 +44,11 @@ def get_groups(SERVICE_ACCOUNT_FILE: str, scope: List[str], subject: str) -> str
         "admin", "directory_v1", credentials=credentials
     )
 
-    response = (
-        client.groups()
-        .list(domain="digital.cabinet-office.gov.uk", maxResults=10)
-        .execute()
-    )
-
-    return response
+    return client
 
 
 def build_group_dict():
-    response = get_groups(
+    response = create_client(
         get_credentials_file(get_env_var("CREDENTIALS")),
         get_scope(get_env_var("SCOPES")),
         get_subject_email(get_env_var("SUBJECT")),
@@ -60,11 +56,29 @@ def build_group_dict():
 
     group_ids = {}
 
-    for r in response["groups"]:
-        group_names = r["name"]
-        group_id = r["id"]
-        group_ids[group_names] = group_id
+    NextPageToken = "firstPage"
+    PageToken = None
+
+    while NextPageToken:
+
+        service = (
+            response.groups()
+            .list(
+                pageToken=PageToken,
+                domain="digital.cabinet-office.gov.uk",
+                maxResults=10,
+            )
+            .execute()
+        )
+        NextPageToken = None
+        if "nextPageToken" in service:
+            PageToken = service["nextPageToken"]
+            NextPageToken = service["nextPageToken"]
+
+        if service:
+            if "nextPageToken" in service:
+                for r in service["groups"]:
+                    group_names = r["name"]
+                    group_id = r["id"]
+                    group_ids[group_names] = group_id
     return group_ids
-
-
-pprint(build_group_dict())
