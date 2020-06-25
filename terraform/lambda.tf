@@ -2,6 +2,10 @@ data "aws_ssm_parameter" "google_credentials" {
   name = "/Google-Data-To-Splunk/credentials"
 }
 
+data "aws_ssm_parameter" "subject_email" {
+  name = "/Google-Data-To-Splunk/subject_email"
+}
+  
 resource "aws_lambda_function" "send_ggroup_data_to_splunk" {
   filename         = var.lambda_zip_location
   source_code_hash = filebase64sha256(var.lambda_zip_location)
@@ -15,6 +19,7 @@ resource "aws_lambda_function" "send_ggroup_data_to_splunk" {
   environment = {
       variables= {
           CREDENTIALS = aws_ssm_parameter.google_credentials
+          SUBJECT     = aws_ssm_parameter.subject_email
       }
   }
         
