@@ -3,3 +3,5 @@ Pipfile.lock
 .mypy*
 .pytest*
 credentials.json
+**/*.zip
+**/.target
