@@ -6,11 +6,11 @@ data "aws_ssm_parameter" "subject_email" {
   name = "/Google-Data-To-Splunk/subject_email"
 }
 
-data "aws_ssm_parameter" "groups_scope"{
+data "aws_ssm_parameter" "groups_scope" {
   name = "/Google-Data-To-Splunk/groups_scope"
 }
 
-data "aws_ssm_parameter" "admin_readonly_scope"{
+data "aws_ssm_parameter" "admin_readonly_scope" {
   name = "/Google-Data-To-Splunk/admin_readonly_scope"
 }
 
@@ -25,14 +25,14 @@ resource "aws_lambda_function" "send_ggroup_data_to_splunk" {
   memory_size      = var.lambda_memory
 
   environment = {
-      variables= {
-          CREDENTIALS = aws_ssm_parameter.google_credentials
-          SUBJECT     = aws_ssm_parameter.subject_email
-          ADMIN_SCOPE = aws_ssm_parameter.groups_scope
-          GROUPS_SCOPE = aws_ssm_parameter.admin_readonly_scope
-      }
+    variables = {
+      CREDENTIALS  = aws_ssm_parameter.google_credentials
+      SUBJECT      = aws_ssm_parameter.subject_email
+      ADMIN_SCOPE  = aws_ssm_parameter.groups_scope
+      GROUPS_SCOPE = aws_ssm_parameter.admin_readonly_scope
+    }
   }
-        
+
   tags = {
     Service       = var.Service
     Environment   = var.Environment
