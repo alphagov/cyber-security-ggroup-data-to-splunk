@@ -6,6 +6,8 @@ import boto3  # type: ignore
 import googleapiclient.discovery  # type: ignore
 from google.oauth2 import service_account  # type: ignore
 
+from send_to_cloudwatch import process_groups_data
+
 
 def get_env_var(env) -> Optional[str]:
     return os.environ.get(env)
@@ -65,47 +67,51 @@ def create_groups_client(
 def build_group_dict():
     response = create_admin_client(
         get_credentials_file(get_env_var("CREDENTIALS")),
-        get_scope(get_env_var("SCOPES")),
+        get_scope(get_env_var("ADMIN_SCOPE")),
         get_subject_email(get_env_var("SUBJECT")),
     )
     group_ids = {}
-    NextPageToken = "one"
-    PageToken = None
+    hasNextPageToken = True
+    nextPageToken = None
 
-    while NextPageToken:
+    while hasNextPageToken:
 
-        service = (
+        groups = (
             response.groups()
             .list(
-                pageToken=PageToken,
+                pageToken=nextPageToken,
                 domain="digital.cabinet-office.gov.uk",
-                maxResults=10,
+                maxResults=200,
             )
             .execute()
         )
-        NextPageToken = None
-        if "nextPageToken" in service:
-            PageToken = service["nextPageToken"]
-            NextPageToken = service["nextPageToken"]
+        hasNextPageToken = False
+        if "nextPageToken" in groups:
+            nextPageToken = groups["nextPageToken"]
+            hasNextPageToken = True
 
-        if service:
-            if "nextPageToken" in service:
-                for r in service["groups"]:
-                    group_names = r["name"]
-                    group_id = r["id"]
+        if groups:
+            if "nextPageToken" in groups:
+                for g in groups["groups"]:
+                    group_names = g["name"]
+                    group_id = g["email"]
                     group_ids[group_names] = group_id
     return group_ids
 
 
-def get_group_info(groups):
+def get_group_info(group_ids):
     response = create_groups_client(
         get_credentials_file(get_env_var("CREDENTIALS")),
-        get_scope(get_env_var("SCOPES")),
+        get_scope(get_env_var("GROUPS_SCOPE")),
         get_subject_email(get_env_var("SUBJECT")),
     )
-    service = response.groups().get(groupUniqueId=groups).execute()
+    group_settings = {}
+    
+    for key, value in group_ids.items():
+        group_settings[value] = response.groups().get(groupUniqueId=value).execute()
 
-    return service
+    return group_settings
 
 
-pprint(get_group_info("00kgcv8k30dto6i"))
+def main(event, context):
+    process_groups_data(get_group_info(build_group_dict()))
