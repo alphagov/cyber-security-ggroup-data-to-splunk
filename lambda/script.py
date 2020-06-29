@@ -6,7 +6,6 @@ import googleapiclient.discovery  # type: ignore
 from google.oauth2 import service_account  # type: ignore
 
 import boto3  # type: ignore
-from send_to_cloudwatch import process_groups_data
 
 
 def get_env_var(env) -> Optional[str]:
