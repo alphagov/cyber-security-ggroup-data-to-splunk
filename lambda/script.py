@@ -96,6 +96,7 @@ def build_group_dict():
                     group_names = g["name"]
                     group_id = g["email"]
                     group_ids[group_names] = group_id
+                    hasNextPageToken = False
     return group_ids
 
 
@@ -108,13 +109,11 @@ def get_group_info(group_ids):
     group_settings = {}
 
     for key, value in group_ids.items():
-        group_settings[value] = response.groups().get(groupUniqueId=value).execute()
+        group_key = key
+        group_value = response.groups().get(groupUniqueId=value).execute()
+        group_settings[group_key] = group_value
+        return group_settings
 
-    pprint(group_settings)
-    return group_settings
 
-
-process_groups_data(get_group_info(build_group_dict()))
-
-# def main(event, context):
-#     process_groups_data(get_group_info(build_group_dict()))
+def main(event, context):
+    print(get_group_info(build_group_dict()))
