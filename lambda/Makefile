@@ -51,10 +51,10 @@ copy_groups_source:
 	cp script.py .target/lambda_function.py
 	cp send_to_cloudwatch.py .target/send_to_cloudwatch.py 
 
-build-google-groups-lambda: clean target_dir add_deps
+build-google-groups-lambda: clean target_dir add_deps copy_groups_source
 	cd .target; zip -9 get_data_for_google_groups.zip -r . 
 	mv .target/get_data_for_google_groups.zip .
 	echo "✔️ Google groups lambda zip file built!"
 
 zip:
-	make build-google-groups-lambda
+	make build-google-groups-lambda\

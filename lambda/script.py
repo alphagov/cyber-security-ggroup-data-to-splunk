@@ -1,4 +1,5 @@
 import os
+from pprint import pprint
 from typing import List, Optional
 
 import googleapiclient.discovery  # type: ignore
@@ -28,9 +29,9 @@ def get_credentials_file(CREDENTIALS: Optional[str]) -> str:
         "Value"
     ]
 
-    with open("credentials.json", "w") as outfile:
+    with open("/tmp/credentials.json", "w") as outfile:
         outfile.write(content)
-    return "credentials.json"
+    return "/tmp/credentials.json"
 
 
 def create_admin_client(
@@ -42,7 +43,7 @@ def create_admin_client(
     )
 
     client = googleapiclient.discovery.build(
-        "admin", "directory_v1", credentials=credentials
+        "admin", "directory_v1", credentials=credentials, cache_discovery=False
     )
 
     return client
@@ -57,7 +58,7 @@ def create_groups_client(
     )
 
     client = googleapiclient.discovery.build(
-        "groupssettings", "v1", credentials=credentials
+        "groupssettings", "v1", credentials=credentials, cache_discovery=False
     )
 
     return client
@@ -109,8 +110,11 @@ def get_group_info(group_ids):
     for key, value in group_ids.items():
         group_settings[value] = response.groups().get(groupUniqueId=value).execute()
 
+    pprint(group_settings)
     return group_settings
 
 
-def main(event, context):
-    process_groups_data(get_group_info(build_group_dict()))
+process_groups_data(get_group_info(build_group_dict()))
+
+# def main(event, context):
+#     process_groups_data(get_group_info(build_group_dict()))

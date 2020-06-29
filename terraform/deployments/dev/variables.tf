@@ -1,5 +1,5 @@
 variable "lambda_zip_location" {
-  default = "../lambda.zip"
+  default = "../../../lambda/get_data_for_google_groups.zip"
 }
 
 variable "runtime" {
@@ -34,4 +34,8 @@ variable "SvcOwner" {
 
 variable "DeployedUsing" {
   default = "terraform"
+}
+
+variable "account_id" {
+  default     = "489877524855"
 }

@@ -1,7 +1,6 @@
-module "splunk-hybrid-searchhead-dev" {
-  prefix              = "staging-"
+module "group-to-splunk-dev" {
   region              = "eu-west-2"
-  source              = "../../modules/splunk-hybrid-searchhead"
+  source              = "../../ggroup-to-splunk"
   Environment         = "staging"
   lambda_zip_location = var.lambda_zip_location
   runtime             = var.runtime
@@ -10,4 +9,5 @@ module "splunk-hybrid-searchhead-dev" {
   Service             = var.Service
   SvcOwner            = var.SvcOwner
   DeployedUsing       = var.DeployedUsing
+  account_id          = var.account_id
 }

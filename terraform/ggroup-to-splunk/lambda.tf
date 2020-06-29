@@ -17,19 +17,19 @@ data "aws_ssm_parameter" "admin_readonly_scope" {
 resource "aws_lambda_function" "send_ggroup_data_to_splunk" {
   filename         = var.lambda_zip_location
   source_code_hash = filebase64sha256(var.lambda_zip_location)
-  function_name    = "script"
+  function_name    = "send_ggroup_data_to_splunk"
   role             = aws_iam_role.lambda_exec_role.arn
-  handler          = "script.main"
+  handler          = "lambda_function.main"
   runtime          = var.runtime
   timeout          = var.lambda_timeout
   memory_size      = var.lambda_memory
 
-  environment = {
+  environment {
     variables = {
-      CREDENTIALS  = aws_ssm_parameter.google_credentials
-      SUBJECT      = aws_ssm_parameter.subject_email
-      ADMIN_SCOPE  = aws_ssm_parameter.groups_scope
-      GROUPS_SCOPE = aws_ssm_parameter.admin_readonly_scope
+      CREDENTIALS  = "/Google-Data-To-Splunk/credentials"
+      SUBJECT      = "/Google-Data-To-Splunk/subject_email"
+      ADMIN_SCOPE  = "/Google-Data-To-Splunk/admin_readonly_scope"
+      GROUPS_SCOPE = "/Google-Data-To-Splunk/groups_scope"
     }
   }
 

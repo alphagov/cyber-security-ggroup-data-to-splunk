@@ -13,18 +13,17 @@ def process_groups_data(groups_data):
     Send the group data one at a time to cloud watch. This will create a
     new event for each group in Splunk.
     """
-    group_name = "/gds/google-group-data"
-    stream_name = f"{datetime.now().strftime('%Y-%m-%d_%H:%M:%S')}-google-group-data"
+    group_name = "/aws/lambda/google-group-data"
+    stream_name = f"{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}-google-group-data"
     debug("create log stream")
     token = create_log_stream(group_name, stream_name)
 
-    for group in groups_data:
-        logs_client().put_log_events(
-            logGroupName=group_name,
-            logStreamName=stream_name,
-            logEvents=group,
-            sequenceToken=token,
-        )
+    logs_client().put_log_events(
+        logGroupName=group_name,
+        logStreamName=stream_name,
+        logEvents=groups_data,
+        sequenceToken=token,
+    )
 
 
 @lru_cache(maxsize=None)

@@ -4,10 +4,10 @@ data "template_file" "lambda_trust" {
 }
 
 data "template_file" "lambda_policy" {
-  template = file("${path.module}/json/interface_lambda/policy.json")
+  template = file("${path.module}/lambda_json/policy.json")
   vars = {
     region     = var.region
-    account_id = data.aws_ssm_parameter.account_id.value
+    account_id = var.account_id
   }
 }
 
@@ -20,7 +20,6 @@ resource "aws_iam_role" "lambda_exec_role" {
     Environment   = var.Environment
     SvcOwner      = var.SvcOwner
     DeployedUsing = var.DeployedUsing
-    SvcCodeURL    = var.SvcCodeURL
   }
 }
 

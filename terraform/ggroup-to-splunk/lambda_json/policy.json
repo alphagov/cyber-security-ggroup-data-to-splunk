@@ -6,7 +6,8 @@
             "Action": [
               "logs:CreateLogGroup",
               "logs:CreateLogStream",
-              "logs:PutLogEvents"
+              "logs:PutLogEvents",
+              "logs:DescribeLogStreams"
             ],
             "Resource": [
               "arn:aws:logs:${region}:${account_id}:*"
@@ -20,7 +21,10 @@
                 "ssm:GetParametersByPath"
             ],
             "Resource": [
-                "arn:aws:ssm:${region}:${account_id}:parameter/Google-Data-To-Splunk/credentials"   
+                "arn:aws:ssm:${region}:${account_id}:parameter/Google-Data-To-Splunk/credentials",
+                "arn:aws:ssm:${region}:${account_id}:parameter/Google-Data-To-Splunk/subject_email",
+                "arn:aws:ssm:${region}:${account_id}:parameter/Google-Data-To-Splunk/admin_readonly_scope",
+                "arn:aws:ssm:${region}:${account_id}:parameter/Google-Data-To-Splunk/groups_scope"
             ]
         }
     ]
