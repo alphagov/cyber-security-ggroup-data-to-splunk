@@ -6,6 +6,7 @@ import googleapiclient.discovery  # type: ignore
 from google.oauth2 import service_account  # type: ignore
 
 import boto3  # type: ignore
+import json
 
 
 def get_env_var(env) -> Optional[str]:
@@ -95,7 +96,6 @@ def build_group_dict():
                     group_names = g["name"]
                     group_id = g["email"]
                     group_ids[group_names] = group_id
-                    hasNextPageToken = False
     return group_ids
 
 
@@ -105,14 +105,10 @@ def get_group_info(group_ids):
         get_scope(get_env_var("GROUPS_SCOPE")),
         get_subject_email(get_env_var("SUBJECT")),
     )
-    group_settings = {}
 
-    for key, value in group_ids.items():
-        group_key = key
-        group_value = response.groups().get(groupUniqueId=value).execute()
-        group_settings[group_key] = group_value
-        return group_settings
+    return [response.groups().get(groupUniqueId=value).execute() for key, value in group_ids.items()]
 
 
 def main(event, context):
-    print(get_group_info(build_group_dict()))
+    for group in get_group_info(build_group_dict()):
+        print(json.dumps(group))
