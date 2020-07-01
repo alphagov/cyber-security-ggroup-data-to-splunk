@@ -1,12 +1,12 @@
+import json
 import os
-from pprint import pprint
-from typing import List, Optional
 
-import googleapiclient.discovery  # type: ignore
-from google.oauth2 import service_account  # type: ignore
+# from pprint import pprint
+from typing import Dict, List, Optional
 
 import boto3  # type: ignore
-import json
+import googleapiclient.discovery  # type: ignore
+from google.oauth2 import service_account  # type: ignore
 
 
 def get_env_var(env) -> Optional[str]:
@@ -36,12 +36,12 @@ def get_credentials_file(CREDENTIALS: Optional[str]) -> str:
 
 def create_admin_client(
     SERVICE_ACCOUNT_FILE: str, scope: List[str], subject: str, pageToken: str = None
-) -> str:
+):
     client = boto3.client("ssm")
     credentials = service_account.Credentials.from_service_account_file(
         SERVICE_ACCOUNT_FILE, scopes=scope, subject=subject,
     )
-
+    # https://googleapis.github.io/google-api-python-client/docs/epy/googleapiclient.discovery-pysrc.html#build
     client = googleapiclient.discovery.build(
         "admin", "directory_v1", credentials=credentials, cache_discovery=False
     )
@@ -51,7 +51,7 @@ def create_admin_client(
 
 def create_groups_client(
     SERVICE_ACCOUNT_FILE: str, scope: List[str], subject: str, pageToken: str = None
-) -> str:
+):
     client = boto3.client("ssm")
     credentials = service_account.Credentials.from_service_account_file(
         SERVICE_ACCOUNT_FILE, scopes=scope, subject=subject,
@@ -64,7 +64,7 @@ def create_groups_client(
     return client
 
 
-def build_group_dict():
+def build_group_dict() -> Dict[str, str]:
     response = create_admin_client(
         get_credentials_file(get_env_var("CREDENTIALS")),
         get_scope(get_env_var("ADMIN_SCOPE")),
@@ -99,14 +99,17 @@ def build_group_dict():
     return group_ids
 
 
-def get_group_info(group_ids):
+def get_group_info(group_ids: Dict[str, str]) -> List[Dict[str, str]]:
     response = create_groups_client(
         get_credentials_file(get_env_var("CREDENTIALS")),
         get_scope(get_env_var("GROUPS_SCOPE")),
         get_subject_email(get_env_var("SUBJECT")),
     )
 
-    return [response.groups().get(groupUniqueId=value).execute() for key, value in group_ids.items()]
+    return [
+        response.groups().get(groupUniqueId=value).execute()
+        for key, value in group_ids.items()
+    ]
 
 
 def main(event, context):
