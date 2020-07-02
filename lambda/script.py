@@ -1,7 +1,6 @@
 import json
 import os
 
-# from pprint import pprint
 from typing import Dict, List, Optional
 
 import boto3  # type: ignore
