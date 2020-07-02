@@ -1,6 +1,5 @@
 import json
 import os
-
 from typing import Dict, List, Optional
 
 import boto3  # type: ignore
@@ -12,19 +11,19 @@ def get_env_var(env) -> Optional[str]:
     return os.environ.get(env)
 
 
-def get_scope(SCOPE: Optional[str]) -> List[str]:
+def get_scope(scope: Optional[str]) -> List[str]:
     client = boto3.client("ssm")
-    return [client.get_parameter(Name=SCOPE, WithDecryption=True)["Parameter"]["Value"]]
+    return [client.get_parameter(Name=scope, WithDecryption=True)["Parameter"]["Value"]]
 
 
-def get_subject_email(SUBJECT: Optional[str]) -> str:
+def get_subject_email(subject: Optional[str]) -> str:
     client = boto3.client("ssm")
-    return client.get_parameter(Name=SUBJECT, WithDecryption=True)["Parameter"]["Value"]
+    return client.get_parameter(Name=subject, WithDecryption=True)["Parameter"]["Value"]
 
 
-def get_credentials_file(CREDENTIALS: Optional[str]) -> str:
+def get_credentials_file(credentials: Optional[str]) -> str:
     client = boto3.client("ssm")
-    content = client.get_parameter(Name=CREDENTIALS, WithDecryption=True)["Parameter"][
+    content = client.get_parameter(Name=credentials, WithDecryption=True)["Parameter"][
         "Value"
     ]
 
@@ -34,11 +33,11 @@ def get_credentials_file(CREDENTIALS: Optional[str]) -> str:
 
 
 def create_admin_client(
-    SERVICE_ACCOUNT_FILE: str, scope: List[str], subject: str, pageToken: str = None
+    service_account_file: str, scope: List[str], subject: str, pageToken: str = None
 ):
     client = boto3.client("ssm")
     credentials = service_account.Credentials.from_service_account_file(
-        SERVICE_ACCOUNT_FILE, scopes=scope, subject=subject,
+        service_account_file, scopes=scope, subject=subject,
     )
     # https://googleapis.github.io/google-api-python-client/docs/epy/googleapiclient.discovery-pysrc.html#build
     client = googleapiclient.discovery.build(
@@ -49,11 +48,11 @@ def create_admin_client(
 
 
 def create_groups_client(
-    SERVICE_ACCOUNT_FILE: str, scope: List[str], subject: str, pageToken: str = None
+    service_account_file: str, scope: List[str], subject: str, pageToken: str = None
 ):
     client = boto3.client("ssm")
     credentials = service_account.Credentials.from_service_account_file(
-        SERVICE_ACCOUNT_FILE, scopes=scope, subject=subject,
+        service_account_file, scopes=scope, subject=subject,
     )
 
     client = googleapiclient.discovery.build(
