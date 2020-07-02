@@ -112,6 +112,10 @@ def get_group_info(group_ids: Dict[str, str]) -> List[Dict[str, str]]:
     ]
 
 
-def main(event, context):
+def print_group_info() -> None:
     for group in get_group_info(build_group_dict()):
         print(json.dumps(group))
+
+
+def main(event, context):
+    print_group_info()
