@@ -32,23 +32,13 @@ def get_credentials_file(credentials: Optional[str]) -> str:
     return "/tmp/credentials.json"
 
 
-def create_admin_client(
-    service_account_file: str, scope: List[str], subject: str, pageToken: str = None
-):
-    client = boto3.client("ssm")
-    credentials = service_account.Credentials.from_service_account_file(
-        service_account_file, scopes=scope, subject=subject,
-    )
-    # https://googleapis.github.io/google-api-python-client/docs/epy/googleapiclient.discovery-pysrc.html#build
-    client = googleapiclient.discovery.build(
-        "admin", "directory_v1", credentials=credentials, cache_discovery=False
-    )
-
-    return client
-
-
-def create_groups_client(
-    service_account_file: str, scope: List[str], subject: str, pageToken: str = None
+def create_client(
+    api: str,
+    api_version: str,
+    service_account_file: str,
+    scope: List[str],
+    subject: str,
+    pageToken: str = None,
 ):
     client = boto3.client("ssm")
     credentials = service_account.Credentials.from_service_account_file(
@@ -56,16 +46,18 @@ def create_groups_client(
     )
 
     client = googleapiclient.discovery.build(
-        "groupssettings", "v1", credentials=credentials, cache_discovery=False
+        api, api_version, credentials=credentials, cache_discovery=False
     )
 
     return client
 
 
-def build_group_dict() -> Dict[str, str]:
-    response = create_admin_client(
+def build_group_dict(api, api_version, scope) -> Dict[str, str]:
+    response = create_client(
+        api,
+        api_version,
         get_credentials_file(get_env_var("CREDENTIALS")),
-        get_scope(get_env_var("ADMIN_SCOPE")),
+        get_scope(get_env_var(scope)),
         get_subject_email(get_env_var("SUBJECT")),
     )
     group_ids = {}
@@ -97,10 +89,14 @@ def build_group_dict() -> Dict[str, str]:
     return group_ids
 
 
-def get_group_info(group_ids: Dict[str, str]) -> List[Dict[str, str]]:
-    response = create_groups_client(
+def get_group_info(
+    api, api_version, scope, group_ids: Dict[str, str]
+) -> List[Dict[str, str]]:
+    response = create_client(
+        api,
+        api_version,
         get_credentials_file(get_env_var("CREDENTIALS")),
-        get_scope(get_env_var("GROUPS_SCOPE")),
+        get_scope(get_env_var(scope)),
         get_subject_email(get_env_var("SUBJECT")),
     )
 
@@ -110,10 +106,24 @@ def get_group_info(group_ids: Dict[str, str]) -> List[Dict[str, str]]:
     ]
 
 
-def print_group_info() -> None:
-    for group in get_group_info(build_group_dict()):
+def print_group_info(
+    group_api_name: str,
+    group_api_version: str,
+    group_scope: str,
+    admin_api_name: str,
+    admin_api_version: str,
+    admin_scope: str,
+) -> None:
+    for group in get_group_info(
+        group_api_name,
+        group_api_version,
+        group_scope,
+        build_group_dict(admin_api_name, admin_api_version, admin_scope),
+    ):
         print(json.dumps(group))
 
 
 def main(event, context):
-    print_group_info()
+    print_group_info(
+        "groupssettings", "v1", "GROUPS_SCOPE", "admin", "directory_v1", "ADMIN_SCOPE"
+    )
