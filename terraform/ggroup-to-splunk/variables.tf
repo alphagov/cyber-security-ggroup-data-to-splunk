@@ -23,7 +23,7 @@ variable "lambda_timeout" {
 }
 
 variable "Service" {
-  default = "ggroup-data-to-splunk"
+  default = "ggroup_data_to_splunk"
 }
 
 variable "Environment" {

@@ -37,5 +37,5 @@ variable "DeployedUsing" {
 }
 
 variable "account_id" {
-  default     = "489877524855"
+  default = "489877524855"
 }
