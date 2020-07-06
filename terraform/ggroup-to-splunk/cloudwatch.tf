@@ -1,12 +1,3 @@
-# resource "aws_cloudwatch_log_group" "google_group_data" {
-#   name = "/aws/lambda/google-group-data"
-
-#   tags = {
-#     Environment = var.Environment
-#     Service     = var.Service
-#   }
-# }
-
 resource "aws_cloudwatch_log_subscription_filter" "log_subscription" {
   name = "log_subscription"
 

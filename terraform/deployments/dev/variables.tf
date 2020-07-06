@@ -20,19 +20,19 @@ variable "lambda_timeout" {
   default = 900
 }
 
-variable "Service" {
+variable "service" {
   default = "ggroup-data-to-splunk"
 }
 
-variable "Environment" {
+variable "environment" {
   default = "test"
 }
 
-variable "SvcOwner" {
+variable "svc_owner" {
   default = "cyber"
 }
 
-variable "DeployedUsing" {
+variable "deployed_using" {
   default = "terraform"
 }
 

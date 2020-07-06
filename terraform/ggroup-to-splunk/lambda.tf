@@ -34,10 +34,10 @@ resource "aws_lambda_function" "send_ggroup_data_to_splunk" {
   }
 
   tags = {
-    Service       = var.Service
-    Environment   = var.Environment
-    SvcOwner      = var.SvcOwner
-    DeployedUsing = var.DeployedUsing
+    Service       = var.service
+    Environment   = var.environment
+    SvcOwner      = var.svc_owner
+    DeployedUsing = var.deployed_using
   }
 }
 

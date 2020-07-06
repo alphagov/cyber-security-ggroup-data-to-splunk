@@ -24,7 +24,7 @@ def get_scope(scope: Optional[str]) -> List[str]:
 
 def get_subject_email(subject: Optional[str]) -> str:
     """
-    Returns the subject email from AWS SSM
+    Returns the subject email from AWS SSM.
     """
     client = boto3.client("ssm")
     return client.get_parameter(Name=subject, WithDecryption=True)["Parameter"]["Value"]
@@ -32,8 +32,8 @@ def get_subject_email(subject: Optional[str]) -> str:
 
 def get_credentials_file(credentials: Optional[str]) -> str:
     """
-    Gets the credentials file from AWS SSM and writes it to the local file /tmp/credentials.json
-    Returns the file location for the credentials file.
+    Gets the credentials file from AWS SSM and writes it to the local file
+    /tmp/credentials.json Returns the file location for the credentials file.
     """
     client = boto3.client("ssm")
     content = client.get_parameter(Name=credentials, WithDecryption=True)["Parameter"][

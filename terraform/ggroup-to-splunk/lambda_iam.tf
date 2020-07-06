@@ -3,10 +3,10 @@ resource "aws_iam_role" "lambda_exec_role" {
   assume_role_policy = data.aws_iam_policy_document.trust_policy.json
 
   tags = {
-    Service       = var.Service
-    Environment   = var.Environment
-    SvcOwner      = var.SvcOwner
-    DeployedUsing = var.DeployedUsing
+    Service       = var.service
+    Environment   = var.environment
+    SvcOwner      = var.svc_owner
+    DeployedUsing = var.deployed_using
   }
 }
 
