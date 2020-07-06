@@ -6,8 +6,10 @@ import boto3  # type: ignore
 import googleapiclient.discovery  # type: ignore
 from google.oauth2 import service_account  # type: ignore
 
+client = boto3.client("ssm")
 
-def get_env_var(env) -> Optional[str]:
+
+def get_env_var(env: str) -> Optional[str]:
     """
     Returns an enviroment variable.
     """
@@ -18,7 +20,6 @@ def get_scope(scope: Optional[str]) -> List[str]:
     """
     Returns the scope from AWS SSM.
     """
-    client = boto3.client("ssm")
     return [client.get_parameter(Name=scope, WithDecryption=True)["Parameter"]["Value"]]
 
 
@@ -26,7 +27,6 @@ def get_subject_email(subject: Optional[str]) -> str:
     """
     Returns the subject email from AWS SSM.
     """
-    client = boto3.client("ssm")
     return client.get_parameter(Name=subject, WithDecryption=True)["Parameter"]["Value"]
 
 
@@ -35,7 +35,6 @@ def get_credentials_file(credentials: Optional[str]) -> str:
     Gets the credentials file from AWS SSM and writes it to the local file
     /tmp/credentials.json Returns the file location for the credentials file.
     """
-    client = boto3.client("ssm")
     content = client.get_parameter(Name=credentials, WithDecryption=True)["Parameter"][
         "Value"
     ]
@@ -56,7 +55,6 @@ def create_client(
     """
     Returns a given client built from a google api and api version passed in .
     """
-    client = boto3.client("ssm")
     credentials = service_account.Credentials.from_service_account_file(
         service_account_file, scopes=scope, subject=subject,
     )
@@ -68,7 +66,7 @@ def create_client(
     return client
 
 
-def build_group_dict(api, api_version, scope) -> Dict[str, str]:
+def build_group_dict(api: str, api_version: str, scope: str) -> Dict[str, str]:
     """
     Returns a dictionary of google groups names and their ID.
     """
@@ -94,6 +92,7 @@ def build_group_dict(api, api_version, scope) -> Dict[str, str]:
             )
             .execute()
         )
+
         hasNextPageToken = False
         if "nextPageToken" in groups:
             nextPageToken = groups["nextPageToken"]
@@ -109,7 +108,7 @@ def build_group_dict(api, api_version, scope) -> Dict[str, str]:
 
 
 def get_group_info(
-    api, api_version, scope, group_ids: Dict[str, str]
+    api: str, api_version: str, scope: str, group_ids: Dict[str, str]
 ) -> List[Dict[str, str]]:
     """
     Returns a List of dicts containing each groups metadata.

@@ -17,7 +17,7 @@ test: checks
 checks: Pipfile.lock
 	echo "⏳ running pipeline..."
 	set -e
-	pipenv run isort --atomic -yq
+	pipenv run isort --atomic -q .
 	pipenv run black -q .
 	pipenv run flake8 --max-line-length=88 .  # in line with black
 	pipenv run mypy --pretty .
