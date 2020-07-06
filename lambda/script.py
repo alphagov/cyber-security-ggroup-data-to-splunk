@@ -8,20 +8,33 @@ from google.oauth2 import service_account  # type: ignore
 
 
 def get_env_var(env) -> Optional[str]:
+    """
+    Returns an enviroment variable.
+    """
     return os.environ.get(env)
 
 
 def get_scope(scope: Optional[str]) -> List[str]:
+    """
+    Returns the scope from AWS SSM.
+    """
     client = boto3.client("ssm")
     return [client.get_parameter(Name=scope, WithDecryption=True)["Parameter"]["Value"]]
 
 
 def get_subject_email(subject: Optional[str]) -> str:
+    """
+    Returns the subject email from AWS SSM
+    """
     client = boto3.client("ssm")
     return client.get_parameter(Name=subject, WithDecryption=True)["Parameter"]["Value"]
 
 
 def get_credentials_file(credentials: Optional[str]) -> str:
+    """
+    Gets the credentials file from AWS SSM and writes it to the local file /tmp/credentials.json
+    Returns the file location for the credentials file.
+    """
     client = boto3.client("ssm")
     content = client.get_parameter(Name=credentials, WithDecryption=True)["Parameter"][
         "Value"
@@ -40,6 +53,9 @@ def create_client(
     subject: str,
     pageToken: str = None,
 ):
+    """
+    Returns a given client built from a google api and api version passed in .
+    """
     client = boto3.client("ssm")
     credentials = service_account.Credentials.from_service_account_file(
         service_account_file, scopes=scope, subject=subject,
@@ -53,6 +69,9 @@ def create_client(
 
 
 def build_group_dict(api, api_version, scope) -> Dict[str, str]:
+    """
+    Returns a dictionary of google groups names and their ID.
+    """
     response = create_client(
         api,
         api_version,
@@ -92,6 +111,9 @@ def build_group_dict(api, api_version, scope) -> Dict[str, str]:
 def get_group_info(
     api, api_version, scope, group_ids: Dict[str, str]
 ) -> List[Dict[str, str]]:
+    """
+    Returns a List of dicts containing each groups metadata.
+    """
     response = create_client(
         api,
         api_version,
@@ -114,6 +136,9 @@ def print_group_info(
     admin_api_version: str,
     admin_scope: str,
 ) -> None:
+    """
+    Prints each group's information so that it can be picked up by Cloudwatch Logs
+    """
     for group in get_group_info(
         group_api_name,
         group_api_version,
