@@ -1,8 +1,8 @@
 variable "lambda_zip_location" {
   description = "Location of the lambda zip"
-  type = string
-  default = ""
-  }
+  type        = string
+  default     = ""
+}
 
 variable "runtime" {
   description = "runtime for lambda"
