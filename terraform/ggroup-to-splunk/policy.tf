@@ -19,10 +19,10 @@ data "aws_iam_policy_document" "lambda_exec_policy" {
       "ssm:GetParametersByPath"
     ]
     resources = [
-      "arn:aws:ssm:${var.region}:${var.account_id}:parameter/Google-Data-To-Splunk/credentials",
-      "arn:aws:ssm:${var.region}:${var.account_id}:parameter/Google-Data-To-Splunk/subject_email",
-      "arn:aws:ssm:${var.region}:${var.account_id}:parameter/Google-Data-To-Splunk/admin_readonly_scope",
-      "arn:aws:ssm:${var.region}:${var.account_id}:parameter/Google-Data-To-Splunk/groups_scope"
+      "arn:aws:ssm:${var.region}:${var.account_id}:parameter/google_data_to_splunk/credentials",
+      "arn:aws:ssm:${var.region}:${var.account_id}:parameter/google_data_to_splunk/subject_email",
+      "arn:aws:ssm:${var.region}:${var.account_id}:parameter/google_data_to_splunk/admin_readonly_scope",
+      "arn:aws:ssm:${var.region}:${var.account_id}:parameter/google_data_to_splunk/groups_scope"
     ]
   }
 }

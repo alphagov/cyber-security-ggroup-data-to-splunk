@@ -13,7 +13,7 @@ variable "region" {
 }
 
 variable "lambda_memory" {
-  default = 2048
+  default = 256
 }
 
 variable "lambda_timeout" {
