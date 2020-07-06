@@ -1,16 +1,3 @@
-# data "template_file" "lambda_trust" {
-#   template = file("${path.module}/lambda_json/trust.json")
-#   vars     = {}
-# }
-
-# data "template_file" "lambda_policy" {
-#   template = file("${path.module}/lambda_json/policy.json")
-#   vars = {
-#     region     = var.region
-#     account_id = var.account_id
-#   }
-# }
-
 resource "aws_iam_role" "lambda_exec_role" {
   name               = "lambda_exec_role"
   assume_role_policy = data.aws_iam_policy_document.trust_policy.json
