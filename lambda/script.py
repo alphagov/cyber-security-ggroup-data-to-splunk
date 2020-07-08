@@ -85,17 +85,17 @@ def build_group_dict(api: str, api_version: str, scope: str) -> Dict[str, str]:
             )
             .execute()
         )
-        hasNextPageToken = False
-        if "nextPageToken" in groups:
-            nextPageToken = groups["nextPageToken"]
-            hasNextPageToken = True
-
         if groups:
-            if "nextPageToken" in groups:
-                for g in groups["groups"]:
-                    group_names = g["name"]
-                    group_id = g["email"]
-                    group_ids[group_names] = group_id
+            for g in groups["groups"]:
+                group_names = g["name"]
+                group_id = g["email"]
+                group_ids[group_names] = group_id
+
+            if "nextPageToken" not in groups:
+                hasNextPageToken = False
+        else:
+            hasNextPageToken = False
+
     return group_ids
 
 
