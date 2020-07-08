@@ -71,11 +71,9 @@ def build_group_dict(api: str, api_version: str, scope: str) -> Dict[str, str]:
         get_subject_email(os.environ.get("SUBJECT")),
     )
     group_ids = {}
-    hasNextPageToken = True
     nextPageToken = None
 
-    while hasNextPageToken:
-
+    while True:
         groups = (
             response.groups()
             .list(
@@ -92,9 +90,7 @@ def build_group_dict(api: str, api_version: str, scope: str) -> Dict[str, str]:
                 group_ids[group_names] = group_id
 
             if "nextPageToken" not in groups:
-                hasNextPageToken = False
-        else:
-            hasNextPageToken = False
+                break
 
     return group_ids
 
