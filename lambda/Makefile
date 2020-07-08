@@ -20,13 +20,13 @@ checks: Pipfile.lock
 	pipenv run isort --atomic -q .
 	pipenv run black -q .
 	pipenv run flake8 --max-line-length=88 .  # in line with black
-	pipenv run mypy --pretty .
+	pipenv run mypy --pretty ./*.py
 	echo "✔️ Checks pipeline passed!"
 
 Pipfile.lock:
 	set -e
 	echo "⏳ installing..."
-	pipenv install flake8 mypy watchdog pyyaml argh pytest isort
+	pipenv install flake8 mypy watchdog pyyaml argh pytest isort google-api-python-client google-auth-httplib2 google-auth-oauthlib vcrpy
 	pipenv install --pre black
 	pipenv run mypy_boto3 -q && echo  "✔️ mypy_boto3 stubs installed!"!! || true # ignored if not installed
 	echo "✔️ Pip dependencies installed!"
