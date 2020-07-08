@@ -73,7 +73,7 @@ def build_group_dict(api: str, api_version: str, scope: str) -> Dict[str, str]:
     group_ids = {}
     nextPageToken = None
 
-    while True:
+    while True: 
         groups = (
             response.groups()
             .list(
