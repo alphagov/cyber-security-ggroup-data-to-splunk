@@ -9,13 +9,6 @@ from google.oauth2 import service_account  # type: ignore
 client = boto3.client("ssm")
 
 
-def get_env_var(env: str) -> Optional[str]:
-    """
-    Returns an enviroment variable.
-    """
-    return os.environ.get(env)
-
-
 def get_scope(scope: Optional[str]) -> List[str]:
     """
     Returns the scope from AWS SSM.
@@ -73,9 +66,9 @@ def build_group_dict(api: str, api_version: str, scope: str) -> Dict[str, str]:
     response = create_client(
         api,
         api_version,
-        get_credentials_file(get_env_var("CREDENTIALS")),
-        get_scope(get_env_var(scope)),
-        get_subject_email(get_env_var("SUBJECT")),
+        get_credentials_file(os.environ.get("CREDENTIALS")),
+        get_scope(os.environ.get(scope)),
+        get_subject_email(os.environ.get("SUBJECT")),
     )
     group_ids = {}
     hasNextPageToken = True
@@ -115,9 +108,9 @@ def get_group_info(
     response = create_client(
         api,
         api_version,
-        get_credentials_file(get_env_var("CREDENTIALS")),
-        get_scope(get_env_var(scope)),
-        get_subject_email(get_env_var("SUBJECT")),
+        get_credentials_file(os.environ.get("CREDENTIALS")),
+        get_scope(os.environ.get(scope)),
+        get_subject_email(os.environ.get("SUBJECT")),
     )
 
     return [
