@@ -30,7 +30,9 @@ def get_subject_email(subject: Optional[str]) -> str:
     return client.get_parameter(Name=subject, WithDecryption=True)["Parameter"]["Value"]
 
 
-def get_credentials_file(credentials: Optional[str], cred_file_location: str ="/tmp/credentials.json") -> str:
+def get_credentials_file(
+    credentials: Optional[str], cred_file_location: str = "/tmp/credentials.json"
+) -> str:
     """
     Gets the credentials file from AWS SSM and writes it to the local file
     /tmp/credentials.json Returns the file location for the credentials file.

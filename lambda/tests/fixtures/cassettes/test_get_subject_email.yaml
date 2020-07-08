@@ -1,0 +1,35 @@
+interactions:
+- request:
+    body: '{"Name":"/test_param/subject_email","WithDecryption":true}'
+    headers:
+      Content-Length:
+      - '72'
+      Content-Type:
+      - !!binary |
+        YXBwbGljYXRpb24veC1hbXotanNvbi0xLjE=
+      User-Agent:
+      - !!binary |
+        Qm90bzMvMS4xNC4xNyBQeXRob24vMy44LjIgTGludXgvNS41LjAtMDUwNTAwLWdlbmVyaWMgQm90
+        b2NvcmUvMS4xNy4xNw==
+    method: POST
+    uri: https://ssm.eu-west-2.amazonaws.com/
+  response:
+    body:
+      string: '{"Parameter":{"ARN":"arn:aws:ssm:us-east-1:000000000000:parameter/test_param/","DataType":"text","LastModifiedDate":0,"Name":"/google_data_to_splunk/subject_email","Type":"SecureString","Value":"admin@digital.cabinet-office.gov.uk","Version":1}}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '245'
+      Content-Type:
+      - application/x-amz-json-1.1
+      Date:
+      - Tue, 07 Jul 2020 13:12:12 GMT
+      Server:
+      - Server
+      x-amzn-RequestId:
+      - 8a290998-0cf4-4450-96bb-78286e45f429
+    status:
+      code: 200
+      message: OK
+version: 1
