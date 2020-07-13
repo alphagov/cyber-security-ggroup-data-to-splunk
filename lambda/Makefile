@@ -44,16 +44,19 @@ target_dir:
 	rm -rf .target/
 	mkdir .target
 
+create_requirements.txt:
+	pipenv run pip freeze > requirements/requirements.txt
+
 add_deps: target_dir
-	pipenv run python3 -m pip install -r requirements.txt -t .target
+	pipenv run python3 -m pip install -r requirements/requirements.txt -t .target
 
 copy_groups_source:
 	cp script.py .target/lambda_function.py
 
-build-google-groups-lambda: clean target_dir add_deps copy_groups_source
+build_google_groups_lambda: clean create_requirements.txt target_dir add_deps copy_groups_source
 	cd .target; zip -9 get_data_for_google_groups.zip -r . 
 	mv .target/get_data_for_google_groups.zip .
 	echo "✔️ Google groups lambda zip file built!"
 
 zip:
-	make build-google-groups-lambda\
+	make build_google_groups_lambda\
