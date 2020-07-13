@@ -14,11 +14,11 @@ pyyaml   = "*"
 watchdog = "*"
 
 [packages]
+boto3                    = "*"
+botocore                 = "*"
 google-api-python-client = "*"
 google-auth-httplib2     = "*"
 google-auth-oauthlib     = "*"
-boto3                    = "*"
-botocore                 = "*"
 
 [requires]
 python_version = "3.8"
