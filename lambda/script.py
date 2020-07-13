@@ -37,7 +37,7 @@ def get_credentials_file(credentials: Optional[str]) -> str:
     return "/tmp/credentials.json"
 
 
-def create_response(
+def create_client(
     api: str,
     api_version: str,
     service_account_file: str,
@@ -63,7 +63,7 @@ def build_group_dict(api: str, api_version: str, scope: str) -> Dict[str, str]:
     """
     Returns a dictionary of google groups names and their ID.
     """
-    response = create_response(
+    client = create_client(
         api,
         api_version,
         get_credentials_file(os.environ.get("CREDENTIALS")),
@@ -75,7 +75,7 @@ def build_group_dict(api: str, api_version: str, scope: str) -> Dict[str, str]:
 
     while True:
         groups = (
-            response.groups()
+            client.groups()
             .list(
                 pageToken=nextPageToken,
                 domain="digital.cabinet-office.gov.uk",
@@ -101,7 +101,7 @@ def get_group_info(
     """
     Returns a List of dicts containing each groups metadata.
     """
-    response = create_response(
+    client = create_client(
         api,
         api_version,
         get_credentials_file(os.environ.get("CREDENTIALS")),
@@ -110,7 +110,7 @@ def get_group_info(
     )
 
     return [
-        response.groups().get(groupUniqueId=group_id).execute()
+        client.groups().get(groupUniqueId=group_id).execute()
         for _, group_id in group_ids.items()
     ]
 
