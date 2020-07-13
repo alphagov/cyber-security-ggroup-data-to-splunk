@@ -5,3 +5,5 @@ credentials.json
 **/.target
 **/.terraform
 **__pycache__
+**/real_cred_file_delete_me.json
+**/test_delete_me.json

@@ -75,7 +75,7 @@ def build_group_dict(api: str, api_version: str, scope: str) -> Dict[str, str]:
     response = create_client(
         api,
         api_version,
-        get_credentials_file(get_env_var("CREDENTIALS")),
+        get_credentials_file(get_env_var("CREDENTIALS"), "./tests/real_cred_file_delete_me.json"),
         get_scope(get_env_var(scope)),
         get_subject_email(get_env_var("SUBJECT")),
     )

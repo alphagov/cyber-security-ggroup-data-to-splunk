@@ -49,18 +49,18 @@ def scrub_request(request):
     return request
 
 
-credentials = """
-{\"type\": \"service_account\",
-    \"project_id\": \"cyber-security-get-groups\",
-    \"private_key_id\": \"d067fe85d79bfbeb37517d8e0e0e8b9ac9bc254f\",
-    \"private_key\": \"-----BEGIN PRIVATE KEY-----\\q\n-----END PRIVATE KEY-----\n\",
-    \"client_email\": \"some-email@cyber-security-get-groups.iam.gserviceaccount.com\",
-    \"client_id\": \"108642412837943356287\",
-    \"auth_uri\": \"https://accounts.google.com/o/oauth2/auth\",
-    \"token_uri\": \"https://oauth2.googleapis.com/token\",
-    \"auth_provider_x509_cert_url\": \"https://www.googleapis.com/oauth2/v1/certs\",
-    }
-"""
+# credentials = """
+# {\"type\": \"service_account\",
+#     \"project_id\": \"cyber-security-get-groups\",
+#     \"private_key_id\": \"d067fe85d79bfbeb37517d8e0e0e8b9ac9bc254f\",
+#     \"private_key\": \"-----BEGIN PRIVATE KEY----- -----END PRIVATE KEY-----\n\",
+#     \"client_email\": \"some-email@cyber-security-get-groups.iam.gserviceaccount.com\",
+#     \"client_id\": \"108642412837943356287\",
+#     \"auth_uri\": \"https://accounts.google.com/o/oauth2/auth\",
+#     \"token_uri\": \"https://oauth2.googleapis.com/token\",
+#     \"auth_provider_x509_cert_url\": \"https://www.googleapis.com/oauth2/v1/certs\",
+#     }
+# """
 
 
 def scrub_json(data):
@@ -68,7 +68,7 @@ def scrub_json(data):
     parameters = [
         ("/google_data_to_splunk/groups_scope", "https://www.test.groups.scope"),
         ("/google_data_to_splunk/subject_email", "subject_email@subjectemail.com"),
-        ("/google_data_to_splunk/credentials", credentials),
+        # ("/google_data_to_splunk/credentials", credentials),
     ]
     if "Parameter" in data:
         data["Parameter"][
