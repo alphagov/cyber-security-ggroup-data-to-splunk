@@ -51,6 +51,9 @@ add_deps: target_dir
 copy_groups_source:
 	cp script.py .target/lambda_function.py
 
+post_clean:
+	rm -rf .target
+
 build_google_groups_lambda: clean create_requirements.txt target_dir add_deps copy_groups_source
 	cd .target; zip -9 get_data_for_google_groups.zip -r .
 	mv .target/get_data_for_google_groups.zip .
@@ -58,3 +61,4 @@ build_google_groups_lambda: clean create_requirements.txt target_dir add_deps co
 
 zip:
 	make build_google_groups_lambda
+	make post_clean

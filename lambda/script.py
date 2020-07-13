@@ -9,23 +9,24 @@ from google.oauth2 import service_account  # type: ignore
 client = boto3.client("ssm")
 
 
-def get_scope(scope: Optional[str]) -> List[str]:
+def get_scope(scope: str) -> List[str]:
     """
     Returns the scope from AWS SSM.
     """
     return [client.get_parameter(Name=scope, WithDecryption=True)["Parameter"]["Value"]]
 
 
-def get_subject_email(subject: Optional[str]) -> str:
+def get_subject_email(subject: str) -> str:
     """
     Returns the subject email from AWS SSM.
     """
     return client.get_parameter(Name=subject, WithDecryption=True)["Parameter"]["Value"]
 
 
-def get_credentials_file(credentials: Optional[str]) -> str:
+def get_credentials_file(credentials: str) -> str:
     """
-    Gets the credentials file from AWS SSM and writes it to the local file
+    Gets the credentials file from AWS SSM and wri
+EventStreamErrortes it to the local file
     /tmp/credentials.json Returns the file location for the credentials file.
     """
     content = client.get_parameter(Name=credentials, WithDecryption=True)["Parameter"][
@@ -66,9 +67,9 @@ def build_group_dict(api: str, api_version: str, scope: str) -> Dict[str, str]:
     client = create_client(
         api,
         api_version,
-        get_credentials_file(os.environ.get("CREDENTIALS")),
-        get_scope(os.environ.get(scope)),
-        get_subject_email(os.environ.get("SUBJECT")),
+        get_credentials_file(os.environ["CREDENTIALS"]),
+        get_scope(os.environ[scope]),
+        get_subject_email(os.environ["SUBJECT"]),
     )
     group_ids = {}
     nextPageToken = None
@@ -104,9 +105,9 @@ def get_group_info(
     client = create_client(
         api,
         api_version,
-        get_credentials_file(os.environ.get("CREDENTIALS")),
-        get_scope(os.environ.get(scope)),
-        get_subject_email(os.environ.get("SUBJECT")),
+        get_credentials_file(os.environ["CREDENTIALS"]),
+        get_scope(os.environ[scope]),
+        get_subject_email(os.environ["SUBJECT"]),
     )
 
     return [
