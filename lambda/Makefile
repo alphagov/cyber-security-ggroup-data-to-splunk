@@ -7,14 +7,14 @@
 .SILENT: test install upgrade watch checks Pipfile.lock
 
 clean:
-	rm -rf __pycache__ .coverage *.egg-info .tox venv .pytest_cache htmlcov **/__pycache__ **/*.pyc .target setup.cfg Pipfile Pipfile.lock *.zip
+	rm -rf __pycache__ .coverage *.egg-info .tox venv .pytest_cache htmlcov **/__pycache__ **/*.pyc .target *.zip
 	echo "✔️ Cleanup of files completed!"
 
 test: checks
 	pipenv run pytest -sqx --disable-warnings
 	echo "✔️ Tests passed!"
 
-checks: Pipfile.lock
+checks:
 	echo "⏳ running pipeline..."
 	set -e
 	pipenv run isort --atomic -q .
@@ -23,12 +23,10 @@ checks: Pipfile.lock
 	pipenv run mypy --pretty .
 	echo "✔️ Checks pipeline passed!"
 
-Pipfile.lock:
+setup:
 	set -e
 	echo "⏳ installing..."
-	pipenv install flake8 mypy watchdog pyyaml argh pytest isort
-	pipenv install --pre black
-	pipenv run mypy_boto3 -q && echo  "✔️ mypy_boto3 stubs installed!"!! || true # ignored if not installed
+	pipenv install --dev
 	echo "✔️ Pip dependencies installed!"
 
 upgrade:
@@ -54,9 +52,9 @@ copy_groups_source:
 	cp script.py .target/lambda_function.py
 
 build_google_groups_lambda: clean create_requirements.txt target_dir add_deps copy_groups_source
-	cd .target; zip -9 get_data_for_google_groups.zip -r . 
+	cd .target; zip -9 get_data_for_google_groups.zip -r .
 	mv .target/get_data_for_google_groups.zip .
 	echo "✔️ Google groups lambda zip file built!"
 
 zip:
-	make build_google_groups_lambda\
+	make build_google_groups_lambda
