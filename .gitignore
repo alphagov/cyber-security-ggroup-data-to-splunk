@@ -1,0 +1,6 @@
+.mypy*
+.pytest*
+credentials.json
+**/*.zip
+**/.target
+**/.terraform
