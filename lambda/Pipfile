@@ -6,9 +6,19 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-google-api-python-client = "*"
-google-auth-httplib2 = "*"
-google-auth-oauthlib = "*"
+flake8 = "*"
+mypy = "*"
+watchdog = "*"
+pyyaml = "*"
+argh = "*"
+pytest = "*"
+isort = "*"
+black = "*"
+boto3 = "*"
+botocore = "*"
 
 [requires]
 python_version = "3.8"
+
+[pipenv]
+allow_prereleases = true

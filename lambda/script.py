@@ -25,7 +25,8 @@ def get_subject_email(subject: Optional[str]) -> str:
 
 def get_credentials_file(credentials: Optional[str]) -> str:
     """
-    Gets the credentials file from AWS SSM and writes it to the local file
+    Gets the credentials file from AWS SSM and wri
+EventStreamErrortes it to the local file
     /tmp/credentials.json Returns the file location for the credentials file.
     """
     content = client.get_parameter(Name=credentials, WithDecryption=True)["Parameter"][
@@ -63,12 +64,13 @@ def build_group_dict(api: str, api_version: str, scope: str) -> Dict[str, str]:
     """
     Returns a dictionary of google groups names and their ID.
     """
+
     client = create_client(
         api,
         api_version,
-        get_credentials_file(os.environ.get("CREDENTIALS")),
-        get_scope(os.environ.get(scope)),
-        get_subject_email(os.environ.get("SUBJECT")),
+        get_credentials_file(os.environ["CREDENTIALS"]),
+        get_scope(os.environ[scope]),
+        get_subject_email(os.environ["SUBJECT"]),
     )
     group_ids = {}
     nextPageToken = None
@@ -104,9 +106,9 @@ def get_group_info(
     client = create_client(
         api,
         api_version,
-        get_credentials_file(os.environ.get("CREDENTIALS")),
-        get_scope(os.environ.get(scope)),
-        get_subject_email(os.environ.get("SUBJECT")),
+        get_credentials_file(os.environ["CREDENTIALS"]),
+        get_scope(os.environ[scope]),
+        get_subject_email(os.environ["SUBJECT"]),
     )
 
     return [
