@@ -9,21 +9,21 @@ from google.oauth2 import service_account  # type: ignore
 client = boto3.client("ssm")
 
 
-def get_scope(scope: Optional[str]) -> List[str]:
+def get_scope(scope: str) -> List[str]:
     """
     Returns the scope from AWS SSM.
     """
     return [client.get_parameter(Name=scope, WithDecryption=True)["Parameter"]["Value"]]
 
 
-def get_subject_email(subject: Optional[str]) -> str:
+def get_subject_email(subject: str) -> str:
     """
     Returns the subject email from AWS SSM.
     """
     return client.get_parameter(Name=subject, WithDecryption=True)["Parameter"]["Value"]
 
 
-def get_credentials_file(credentials: Optional[str]) -> str:
+def get_credentials_file(credentials: str) -> str:
     """
     Gets the credentials file from AWS SSM and wri
 EventStreamErrortes it to the local file
@@ -64,7 +64,6 @@ def build_group_dict(api: str, api_version: str, scope: str) -> Dict[str, str]:
     """
     Returns a dictionary of google groups names and their ID.
     """
-
     client = create_client(
         api,
         api_version,
