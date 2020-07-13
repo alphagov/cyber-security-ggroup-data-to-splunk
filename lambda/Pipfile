@@ -17,8 +17,8 @@ watchdog = "*"
 google-api-python-client = "*"
 google-auth-httplib2     = "*"
 google-auth-oauthlib     = "*"
-boto3 = "*"
-botocore = "*"
+boto3                    = "*"
+botocore                 = "*"
 
 [requires]
 python_version = "3.8"
