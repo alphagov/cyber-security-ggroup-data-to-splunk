@@ -6,21 +6,25 @@ import boto3  # type: ignore
 import googleapiclient.discovery  # type: ignore
 from google.oauth2 import service_account  # type: ignore
 
-client = boto3.client("ssm")
+ssm_client = boto3.client("ssm")
 
 
 def get_scope(scope: str) -> List[str]:
     """
     Returns the scope from AWS SSM.
     """
-    return [client.get_parameter(Name=scope, WithDecryption=True)["Parameter"]["Value"]]
+    return [
+        ssm_client.get_parameter(Name=scope, WithDecryption=True)["Parameter"]["Value"]
+    ]
 
 
 def get_subject_email(subject: str) -> str:
     """
     Returns the subject email from AWS SSM.
     """
-    return client.get_parameter(Name=subject, WithDecryption=True)["Parameter"]["Value"]
+    return ssm_client.get_parameter(Name=subject, WithDecryption=True)["Parameter"][
+        "Value"
+    ]
 
 
 def get_credentials_file(credentials: str) -> str:
@@ -28,16 +32,16 @@ def get_credentials_file(credentials: str) -> str:
     Gets the credentials file from AWS SSM and writes it to the local file
     /tmp/credentials.json Returns the file location for the credentials file.
     """
-    content = client.get_parameter(Name=credentials, WithDecryption=True)["Parameter"][
-        "Value"
-    ]
+    content = ssm_client.get_parameter(Name=credentials, WithDecryption=True)[
+        "Parameter"
+    ]["Value"]
 
     with open("/tmp/credentials.json", "w") as outfile:
         outfile.write(content)
     return "/tmp/credentials.json"
 
 
-def create_client(
+def create_google_client(
     api: str,
     api_version: str,
     service_account_file: str,
@@ -52,18 +56,18 @@ def create_client(
         service_account_file, scopes=scope, subject=subject,
     )
 
-    client = googleapiclient.discovery.build(
+    google_client = googleapiclient.discovery.build(
         api, api_version, credentials=credentials, cache_discovery=False
     )
 
-    return client
+    return google_client
 
 
 def build_group_dict(api: str, api_version: str, scope: str) -> Dict[str, str]:
     """
     Returns a dictionary of google groups names and their ID.
     """
-    client = create_client(
+    google_client = create_google_client(
         api,
         api_version,
         get_credentials_file(os.environ["CREDENTIALS"]),
@@ -75,7 +79,7 @@ def build_group_dict(api: str, api_version: str, scope: str) -> Dict[str, str]:
 
     while True:
         groups = (
-            client.groups()
+            google_client.groups()
             .list(
                 pageToken=nextPageToken,
                 domain="digital.cabinet-office.gov.uk",
@@ -101,7 +105,7 @@ def get_group_info(
     """
     Returns a List of dicts containing each groups metadata.
     """
-    client = create_client(
+    google_client = create_google_client(
         api,
         api_version,
         get_credentials_file(os.environ["CREDENTIALS"]),
@@ -110,7 +114,7 @@ def get_group_info(
     )
 
     return [
-        client.groups().get(groupUniqueId=group_id).execute()
+        google_client.groups().get(groupUniqueId=group_id).execute()
         for _, group_id in group_ids.items()
     ]
 
