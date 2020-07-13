@@ -1,6 +1,6 @@
 import json
 import os
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 import boto3  # type: ignore
 import googleapiclient.discovery  # type: ignore
@@ -139,7 +139,7 @@ def print_group_info(
         print(json.dumps(group))
 
 
-def main(event, context):
+def main(event: Dict, context: Dict):
     print_group_info(
         "groupssettings", "v1", "GROUPS_SCOPE", "admin", "directory_v1", "ADMIN_SCOPE"
     )
