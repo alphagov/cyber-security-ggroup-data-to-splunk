@@ -1,4 +1,4 @@
-module "splunk-hybrid-searchhead-prod" {
+module "ggroup-to-splunk-prod" {
   region              = "eu-west-2"
   source              = "../../ggroup-to-splunk"
   environment         = "staging"

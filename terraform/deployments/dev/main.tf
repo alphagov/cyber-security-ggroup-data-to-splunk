@@ -1,4 +1,4 @@
-module "group-to-splunk-dev" {
+module "ggroup-to-splunk-dev" {
   region              = "eu-west-2"
   source              = "../../ggroup-to-splunk"
   environment         = "staging"
