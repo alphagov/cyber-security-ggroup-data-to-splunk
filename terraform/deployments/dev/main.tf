@@ -9,5 +9,4 @@ module "ggroup-to-splunk-dev" {
   service             = var.service
   svc_owner           = var.svc_owner
   deployed_using      = var.deployed_using
-  account_id          = var.account_id
 }

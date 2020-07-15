@@ -37,7 +37,3 @@ variable "svc_owner" {
 variable "deployed_using" {
   default = "terraform"
 }
-
-variable "account_id" {
-  default = ""
-}
