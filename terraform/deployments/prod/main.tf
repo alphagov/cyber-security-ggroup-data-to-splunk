@@ -1,5 +1,4 @@
 module "ggroup-to-splunk-prod" {
-  region              = "eu-west-2"
   source              = "../../ggroup-to-splunk"
   environment         = "staging"
   lambda_zip_location = var.lambda_zip_location
