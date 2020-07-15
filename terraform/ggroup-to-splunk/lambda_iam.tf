@@ -1,5 +1,5 @@
 resource "aws_iam_role" "lambda_exec_role" {
-  name               = "lambda_exec_role"
+  name               = "ggroup_lambda_exec_role"
   assume_role_policy = data.aws_iam_policy_document.trust_policy.json
 
   tags = {
