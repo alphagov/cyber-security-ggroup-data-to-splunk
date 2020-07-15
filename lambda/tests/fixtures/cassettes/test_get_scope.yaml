@@ -1,0 +1,34 @@
+interactions:
+- request:
+    body: '{"Name":"/test_param/groups_scope","WithDecryption":true}'
+    headers:
+      Content-Length:
+      - '71'
+      Content-Type:
+      - !!binary |
+        YXB
+      User-Agent:
+      - !!binary |
+        Qm
+    method: POST
+    uri: https://ssm.eu-west-2.amazonaws.com/
+  response:
+    body:
+      string: '{"Parameter":{"ARN":"arn:aws:ssm:us-east-1:000000000000:parameter/test_param/","DataType":"text","LastModifiedDate":0,"Name":"/test_param/groups_scope","Type":"SecureString","Value":"https://www.test.groups.scope","Version":3}}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '238'
+      Content-Type:
+      - application/x-amz-json-1.1
+      Date:
+      - Tue, 07 Jul 2020 13:05:16 GMT
+      Server:
+      - Server
+      x-amzn-RequestId:
+      - 544-131298
+    status:
+      code: 200
+      message: OK
+version: 1

@@ -1,0 +1,45 @@
+  interactions:
+  - request:
+      body: null
+      headers:
+        accept-encoding:
+        - gzip, deflate
+        user-agent:
+        - Python-httplib2/0.18.1 (gzip)
+      method: GET
+      uri: https://www.googleapis.com/discovery/v1/apis/groupssettings/v1/rest
+    response:
+      body:
+        string: "client object"
+      headers:
+        Alt-Svc:
+        - h3-29=":443"
+        Cache-Control:
+        - public, max-age=300, must-revalidate, no-transform
+        Content-Security-Policy:
+        - frame-ancestors 'self'
+        Content-Type:
+        - application/json; charset=UTF-8
+        Date:
+        - Tue, 07 Jul 2020 14:16:14 GMT
+        ETag:
+        - '"u9"'
+        Expires:
+        - Tue, 07 Jul 2020 14:21:14 GMT
+        Server:
+        - GSE
+        Vary:
+        - Origin
+        - X-Origin
+        X-Content-Type-Options:
+        - nosniff
+        X-Frame-Options:
+        - SAMEORIGIN
+        X-XSS-Protection:
+        - 1; mode=block
+        content-length:
+        - '23767'
+      status:
+        code: 200
+        message: OK
+  version: 1
