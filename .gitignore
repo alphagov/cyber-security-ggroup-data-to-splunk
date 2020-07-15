@@ -4,3 +4,4 @@ credentials.json
 **/*.zip
 **/.target
 **/.terraform
+requirements.txt

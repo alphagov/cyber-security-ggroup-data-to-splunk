@@ -1,5 +1,5 @@
 module "ggroup-to-splunk-prod" {
-  source              = "../../ggroup-to-splunk"
+  source              = "../../modules/ggroup-to-splunk"
   environment         = "production"
   lambda_zip_location = "../../../lambda/get_data_for_google_groups.zip"
   runtime             = "python3.7"
