@@ -27,7 +27,13 @@ def get_subject_email(subject: str) -> str:
     ]
 
 
+<<<<<<< HEAD
 def get_credentials_file(credentials: str) -> str:
+=======
+def get_credentials_file(
+    credentials: Optional[str], cred_file_location: str = "/tmp/credentials.json"
+) -> str:
+>>>>>>> b8f6fb671f7f519104befc2625bf6d75945b7d08
     """
     Gets the credentials file from AWS SSM and writes it to the local file
     /tmp/credentials.json Returns the file location for the credentials file.
@@ -36,9 +42,9 @@ def get_credentials_file(credentials: str) -> str:
         "Parameter"
     ]["Value"]
 
-    with open("/tmp/credentials.json", "w") as outfile:
+    with open(cred_file_location, "w") as outfile:
         outfile.write(content)
-    return "/tmp/credentials.json"
+    return cred_file_location
 
 
 def create_google_client(
@@ -70,9 +76,15 @@ def build_group_dict(api: str, api_version: str, scope: str) -> Dict[str, str]:
     google_client = create_google_client(
         api,
         api_version,
+<<<<<<< HEAD
         get_credentials_file(os.environ["CREDENTIALS"]),
         get_scope(os.environ[scope]),
         get_subject_email(os.environ["SUBJECT"]),
+=======
+        get_credentials_file(get_env_var("CREDENTIALS"), "./tests/real_cred_file_delete_me.json"),
+        get_scope(get_env_var(scope)),
+        get_subject_email(get_env_var("SUBJECT")),
+>>>>>>> b8f6fb671f7f519104befc2625bf6d75945b7d08
     )
     group_ids = {}
     nextPageToken = None

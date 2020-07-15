@@ -20,7 +20,7 @@ checks:
 	pipenv run isort --atomic -q .
 	pipenv run black -q .
 	pipenv run flake8 --max-line-length=88 .  # in line with black
-	pipenv run mypy --pretty .
+	pipenv run mypy --pretty ./*.py
 	echo "✔️ Checks pipeline passed!"
 
 setup:

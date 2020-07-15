@@ -6,10 +6,18 @@ interactions:
       - '72'
       Content-Type:
       - !!binary |
+<<<<<<< HEAD
         YXB
       User-Agent:
       - !!binary |
         Qm9
+=======
+        YXBwbGljYXRpb24veC1hbXotanNvbi0xLjE=
+      User-Agent:
+      - !!binary |
+        Qm90bzMvMS4xNC4xNyBQeXRob24vMy44LjIgTGludXgvNS41LjAtMDUwNTAwLWdlbmVyaWMgQm90
+        b2NvcmUvMS4xNy4xNw==
+>>>>>>> b8f6fb671f7f519104befc2625bf6d75945b7d08
     method: POST
     uri: https://ssm.eu-west-2.amazonaws.com/
   response:
@@ -27,7 +35,11 @@ interactions:
       Server:
       - Server
       x-amzn-RequestId:
+<<<<<<< HEAD
       - 8a2
+=======
+      - 8a290998-0cf4-4450-96bb-78286e45f429
+>>>>>>> b8f6fb671f7f519104befc2625bf6d75945b7d08
     status:
       code: 200
       message: OK
