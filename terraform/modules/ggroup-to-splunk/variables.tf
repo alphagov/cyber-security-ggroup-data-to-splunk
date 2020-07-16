@@ -9,11 +9,6 @@ variable "runtime" {
   default     = "python3.7"
 }
 
-variable "region" {
-  type    = string
-  default = "eu-west-2"
-}
-
 variable "lambda_memory" {
   default = 256
 }
@@ -36,8 +31,4 @@ variable "svc_owner" {
 
 variable "deployed_using" {
   default = "terraform"
-}
-
-variable "account_id" {
-  default = ""
 }
