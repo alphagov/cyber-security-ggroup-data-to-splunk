@@ -1,5 +1,6 @@
 import filecmp
 import io
+import json
 import os
 import sys
 from unittest.mock import patch
@@ -235,5 +236,10 @@ def test_print_group_info(mock_build_group_dict, mock_get_group_info):
     )
     sys.stdout = sys.__stdout__
     actual = capturedOutput.getvalue()
-    expected = '{"kind": "admin#directory#group", "id": "id1", "etag": "etag", "email": "group1@email.com", "name": "team1", "directMembersCount": "0", "description": "a description here", "adminCreated": false}\n{"kind": "admin#directory#group", "id": "id2", "etag": "etag", "email": "group2@email.com", "name": "group2", "directMembersCount": "3", "description": "", "adminCreated": false}\n'  # noqa: E501
+    expected = (
+        json.dumps(mock_get_group_info.return_value[0])
+        + "\n"
+        + json.dumps(mock_get_group_info.return_value[1])
+        + "\n"
+    )
     assert actual == expected
