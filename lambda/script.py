@@ -27,7 +27,9 @@ def get_subject_email(subject: str) -> str:
     ]
 
 
-def get_credentials_file(credentials: str, cred_file_location: str = "/tmp/credentials.json") -> str:
+def get_credentials_file(
+    credentials: str, cred_file_location: str = "/tmp/credentials.json"
+) -> str:
     """
     Gets the credentials file from AWS SSM and writes it to the local file
     /tmp/credentials.json Returns the file location for the credentials file.
@@ -76,9 +78,8 @@ def build_group_dict(api: str, api_version: str, scope: str) -> Dict[str, str]:
     )
     group_ids = {}
     nextPageToken = None
-    count = 0
+
     while True:
-        print(nextPageToken)
         groups = (
             google_client.groups()
             .list(
