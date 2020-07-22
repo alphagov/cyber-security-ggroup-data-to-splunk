@@ -86,3 +86,6 @@ terraform/deployments/dev/.terraform:
 
 terraform/deployments/prod/.terraform:
 	@cd terraform/deployments/prod; terraform init -backend=false -reconfigure
+
+terraform_apply_dev:
+	@cd terraform/deployments/dev; terraform plan
