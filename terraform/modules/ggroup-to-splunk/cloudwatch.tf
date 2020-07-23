@@ -8,4 +8,5 @@ resource "aws_cloudwatch_log_subscription_filter" "log_subscription" {
 
 resource "aws_cloudwatch_log_group" "send_ggroup_data_to_splunk" {
   name = "/aws/lambda/aws_lambda_function.send_ggroup_data_to_splunk.function_name"
+  tags = local.tags
 }
