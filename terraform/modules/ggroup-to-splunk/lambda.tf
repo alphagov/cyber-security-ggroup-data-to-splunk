@@ -18,7 +18,7 @@ resource "aws_lambda_function" "send_ggroup_data_to_splunk" {
   filename         = var.lambda_zip_location
   source_code_hash = filebase64sha256(var.lambda_zip_location)
   function_name    = "send_ggroup_data_to_splunk"
-  role             = aws_iam_role.lambda_exec_role.arn
+  role             = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.lambda_role_name}"
   handler          = "lambda_function.main"
   runtime          = var.runtime
   timeout          = var.lambda_timeout

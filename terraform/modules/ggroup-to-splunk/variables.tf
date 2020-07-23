@@ -32,3 +32,7 @@ variable "svc_owner" {
 variable "deployed_using" {
   default = "terraform"
 }
+
+variable "lambda_role_name" {
+  type = string
+}
