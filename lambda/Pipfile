@@ -21,7 +21,7 @@ google-auth-httplib2     = "*"
 google-auth-oauthlib     = "*"
 
 [requires]
-python_version = "3.8"
+python_version = "3.7"
 
 [pipenv]
 allow_prereleases = true
