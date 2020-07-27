@@ -36,7 +36,7 @@ data "aws_iam_policy_document" "ggroup_to_splunk_lambda_policy" {
 
 data "aws_iam_policy_document" "ggroup_to_splunk_lambda_trust" {
   statement {
-    action = ["sts:AssumeRole"]
+    actions = ["sts:AssumeRole"]
     principals {
       type        = "Service"
       identifiers = ["lambda.amazonaws.com"]
