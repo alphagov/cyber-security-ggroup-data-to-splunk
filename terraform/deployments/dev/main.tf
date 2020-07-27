@@ -6,4 +6,5 @@ module "ggroup-to-splunk-dev" {
   lambda_memory       = 256
   lambda_role_name    = "ggroup_lambda_exec_role"
   lambda_timeout      = 900
+  account_id          = "489877524855"
 }
