@@ -91,4 +91,4 @@ terraform_plan_dev:
 	@cd terraform/deployments/dev; terraform init; terraform plan
 
 terraform_apply_dev:
-	@cd terraform/deployments/dev; terraform init; terraform apply --no-verify
+	@cd terraform/deployments/dev; terraform init; terraform apply -auto-approve
