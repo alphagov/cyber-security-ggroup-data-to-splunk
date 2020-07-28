@@ -1,11 +1,11 @@
-# health_status_notify: &health_status_notify
-#   put: health-notification
+health_status_notify: &health_status_notify
+  put: health-notification
 
-# resource_types:
-#   - name: http-api
-#     type: docker-image
-#     source:
-#       repository: gdscyber/http-api-resource
+resource_types:
+  - name: http-api
+    type: docker-image
+    source:
+      repository: gdscyber/http-api-resource
 
 resources:
   - name: ggroup-data-to-splunk-git
@@ -15,21 +15,21 @@ resources:
       uri: https://github.com/alphagov/cyber-security-ggroup-data-to-splunk.git
       branch: concourse
 
-#   - name: health-notification
-#     type: http-api
-#     source:
-#       uri: https://((health_host_prod))/?alert_type=concourse$&alert_name=health
-#       method: POST
-#       headers:
-#         Authorization: "Bearer ((health_token_prod))"
-#       json:
-#         service: "{service}"
-#         state: "{health}"
-#         message: "{message}"
-#         pipeline: "{BUILD_PIPELINE_NAME}"
-#         job: "{BUILD_JOB_NAME}"
-#         build_number: "{BUILD_NAME}"
-#       service: "Google Group Data to Splunk Pipeline"
+  - name: health-notification
+    type: http-api
+    source:
+      uri: https://((health_host_prod))/?alert_type=concourse$&alert_name=health
+      method: POST
+      headers:
+        Authorization: "Bearer ((health_token_prod))"
+      json:
+        service: "{service}"
+        state: "{health}"
+        message: "{message}"
+        pipeline: "{BUILD_PIPELINE_NAME}"
+        job: "{BUILD_JOB_NAME}"
+        build_number: "{BUILD_NAME}"
+      service: "Google Group Data to Splunk Pipeline"
 
 jobs:
   - name: code_validation
@@ -53,27 +53,26 @@ jobs:
               - |
                 pip install pipenv
                 cd ggroup-data-to-splunk-git/lambda
-                pipenv --python 3.8
+                pipenv --python 3.7
                 pipenv install --dev
                 cd ..
                 make test
-        # on_success:
-        #   <<: *health_status_notify
-        #   params:
-        #     message: "Ggroup data to splunk validation passed."
-        #     health: healthy
-        # on_failure:
-        #   <<: *health_status_notify
-        #   params:
-        #     message: "Ggroup data to splunk validation failed"
-        #     health: unhealthy
+        on_success:
+          <<: *health_status_notify
+          params:
+            message: "Ggroup data to splunk validation passed."
+            health: healthy
+        on_failure:
+          <<: *health_status_notify
+          params:
+            message: "Ggroup data to splunk validation failed"
+            health: unhealthy
 
   - name: ggroup_data_to_splunk_dev_deploy
     serial: true
     plan:
       - get: ggroup-data-to-splunk-git
         passed: [code_validation]
-        trigger: true
       - task: terraform_deploy
         config:
           inputs:
@@ -92,65 +91,59 @@ jobs:
                 
                 pip install pipenv
                 cd ggroup-data-to-splunk-git/lambda
-                pipenv --python 3.8
+                pipenv --python 3.7
                 pipenv install
                 
                 cd ..
                 make zip
-                make terraform_plan_dev
-        # on_success:
-        #   <<: *health_status_notify
-        #   params:
-        #     message: "Ggroup data to splunk validation dev deployed successfully."
-        #     health: healthy
-        # on_failure:
-        #   <<: *health_status_notify
-        #   params:
-        #     message: "Failed to deploy Ggroup data to splunk validation failed dev."
-        #     health: unhealthy
+                make terraform_apply_dev
+        on_success:
+          <<: *health_status_notify
+          params:
+            message: "Ggroup data to splunk validation dev deployed successfully."
+            health: healthy
+        on_failure:
+          <<: *health_status_notify
+          params:
+            message: "Failed to deploy Ggroup data to splunk validation failed dev."
+            health: unhealthy
 
-  # - name: ggroup_data_to_splunk_prod_deploy
-  #   serial: true
-  #   plan:
-  #     - get: ggroup-data-to-splunk-git
-  #       passed: [ggroup_data_to_splunk_dev_deploy]
-  #       trigger: true
-  #     - task: terraform_prod_deploy
-  #       config:
-  #         inputs:
-  #         - name: ggroup-data-to-splunk-git
-  #         platform: linux
-  #         image_resource:
-  #           type: docker-image
-  #           source:
-  #             repository: gdscyber/cyber-security-concourse-base-image
-  #         run:
-  #           path: /bin/bash
-  #           args:
-  #             - -c
-  #             - |
-  #               source /usr/local/bin/sts-assume-role.sh ((prod_role_arn)) 'eu-west-2'
-
-  #               pip install pipenv
-
-  #               cd ggroup-data-to-splunk-git
-
-  #               pipenv --python 3.8
-  #               pipenv install
-
-  #               make zip
-
-  #               cd terraform/deplyments/prod
-
-  #               terraform init
-  #               terraform apply --auto-approve
-  #       # on_success:
-  #       #   <<: *health_status_notify
-  #       #   params:
-  #       #     message: "Ggroup data to splunk validation dev deployed successfully."
-  #       #     health: healthy
-  #       # on_failure:
-  #       #   <<: *health_status_notify
-  #       #   params:
-  #       #     message: "Failed to deploy Ggroup data to splunk validation failed dev."
-  #       #     health: unhealthy
+  - name: ggroup_data_to_splunk_prod_deploy
+    serial: true
+    plan:
+      - get: ggroup-data-to-splunk-git
+        passed: [ggroup_data_to_splunk_dev_deploy]
+      - task: terraform_prod_deploy
+        config:
+          inputs:
+          - name: ggroup-data-to-splunk-git
+          platform: linux
+          image_resource:
+            type: docker-image
+            source:
+              repository: gdscyber/cyber-security-concourse-base-image
+          run:
+            path: /bin/bash
+            args:
+              - -c
+              - |
+                source /usr/local/bin/sts-assume-role.sh 'arn:aws:iam::779799343306:role/ggroup_data_to_splunk_concourse_role' 'eu-west-2'
+                  
+                pip install pipenv
+                cd ggroup-data-to-splunk-git/lambda
+                pipenv --python 3.7
+                pipenv install
+                
+                cd ..
+                make zip
+                make terraform_apply_prod
+        on_success:
+          <<: *health_status_notify
+          params:
+            message: "Ggroup data to splunk validation dev deployed successfully."
+            health: healthy
+        on_failure:
+          <<: *health_status_notify
+          params:
+            message: "Failed to deploy Ggroup data to splunk validation failed dev."
+            health: unhealthy
