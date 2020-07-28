@@ -92,3 +92,9 @@ terraform_plan_dev:
 
 terraform_apply_dev:
 	@cd terraform/deployments/dev; terraform init; terraform apply -auto-approve
+
+terraform_plan_prod:
+	@cd terraform/deployments/prod; terraform init; terraform plan
+
+terraform_apply_prod:
+	@cd terraform/deployments/prod; terraform init; terraform apply -auto-approve
