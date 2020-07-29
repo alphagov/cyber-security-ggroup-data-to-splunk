@@ -24,7 +24,3 @@ variable "environment" {
 variable "lambda_role_name" {
   type = string
 }
-
-variable "account_id" {
-  type = string
-}
