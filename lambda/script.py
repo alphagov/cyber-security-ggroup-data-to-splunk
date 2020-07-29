@@ -6,7 +6,7 @@ import boto3  # type: ignore
 import googleapiclient.discovery  # type: ignore
 from google.oauth2 import service_account  # type: ignore
 
-ssm_client = boto3.client("ssm", region_name="eu-west-2")
+ssm_client = boto3.client("ssm")
 
 
 def get_scope(scope: str) -> List[str]:
