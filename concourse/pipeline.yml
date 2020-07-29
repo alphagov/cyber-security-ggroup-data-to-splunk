@@ -13,7 +13,7 @@ resources:
     type: git
     source:
       uri: https://github.com/alphagov/cyber-security-ggroup-data-to-splunk.git
-      branch: concourse
+      branch: master
 
   - name: health-notification
     type: http-api
