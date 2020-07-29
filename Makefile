@@ -67,7 +67,7 @@ zip:
 terraform: terraform_fmt terraform_module_validate terraform_dev_validate terraform_prod_validate
 
 terraform_fmt:
-	@terraform fmt -check -diff -recursive terraform
+	@terraform fmt -recursive terraform
 
 terraform_module_validate: terraform/modules/ggroup-to-splunk/.terraform
 	@cd terraform/modules/ggroup-to-splunk; AWS_DEFAULT_REGION=eu-west-2 terraform validate
@@ -86,3 +86,15 @@ terraform/deployments/dev/.terraform:
 
 terraform/deployments/prod/.terraform:
 	@cd terraform/deployments/prod; terraform init -backend=false -reconfigure
+
+terraform_plan_dev:
+	@cd terraform/deployments/dev; terraform init; terraform plan
+
+terraform_apply_dev:
+	@cd terraform/deployments/dev; terraform init; terraform apply -auto-approve
+
+terraform_plan_prod:
+	@cd terraform/deployments/prod; terraform init; terraform plan
+
+terraform_apply_prod:
+	@cd terraform/deployments/prod; terraform init; terraform apply -auto-approve
