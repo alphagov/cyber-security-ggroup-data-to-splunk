@@ -21,8 +21,11 @@ clean:
 	echo "✔️ Cleanup of files completed!"
 
 test: checks terraform
-	pipenv run pytest -sqx --disable-warnings
+	pipenv run pytest -sqx --disable-warnings --ignore=lambda/contract_test.py
 	echo "✔️ Tests passed!"
+
+contract_test:
+	pipenv run pytest lambda/contract_test.py
 
 checks:
 	echo "⏳ running pipeline..."
