@@ -1,6 +1,5 @@
 from script import (
     get_credentials_file,
-    get_group_info,
     get_scope,
     get_subject_email,
     create_google_client,
@@ -25,7 +24,7 @@ groups_google_client = create_google_client(
 
 def test_google_admin_api():
     """
-    Tests that the google admin api returns something in the format we need 
+    Tests that the google admin api returns something in the format we need
     (ie has name and email)
     """
     groups = (
