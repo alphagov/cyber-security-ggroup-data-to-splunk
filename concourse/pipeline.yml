@@ -30,8 +30,59 @@ resources:
         job: "{BUILD_JOB_NAME}"
         build_number: "{BUILD_NAME}"
       service: "Google Group Data to Splunk Pipeline"
+  
+  - name: every-weekday-resource
+    type: time
+    icon: clock-outline
+    source:
+      start: 10:00 AM
+      stop: 4:00 PM
+      location: Europe/London
+      interval: 24h
+      days: [Monday, Tuesday, Wednesday, Thursday, Friday]
 
+blocks:
+  - &every-weekday
+    get: every-weekday-resource
+    trigger: true
 jobs:
+  - name: google_contract_tests
+    plan:
+      - *every-weekday
+      - get: ggroup-data-to-splunk-git
+      - task: contract_test
+        config:
+          inputs:
+          - name: ggroup-data-to-splunk-git
+          platform: linux
+          image_resource:
+            type: docker-image
+            source:
+              repository: gdscyber/cyber-security-concourse-base-image
+          run:
+            path: bash
+            args:
+              - -c
+              - |
+                source /usr/local/bin/sts-assume-role.sh 'arn:aws:iam::489877524855:role/ggroup_data_to_splunk_concourse_role' 'eu-west-2'
+                pip install pipenv
+                cd ggroup-data-to-splunk-git/lambda
+                pipenv --python 3.7
+                pipenv install --dev
+                cd ..
+                export AWS_DEFAULT_REGION=eu-west-2
+                make contract_test
+        on_success:
+          <<: *health_status_notify
+          params:
+            message: "Ggroup data to splunk contract tests completed successfully."
+            health: healthy
+        on_failure:
+          <<: *health_status_notify
+          params:
+            message: "Ggroup data to splunk contract tests failed."
+            health: unhealthy
+
   - name: code_validation
     serial: false
     plan:

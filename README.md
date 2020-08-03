@@ -25,6 +25,11 @@ Tests are run from the root of the repository by running:
 
 This command will run terraform format, terraform validate, flake8 and the unit tests.
 
+## Contract Tests
+
+Contract tests are run on the project's concourse pipeline to check that the Google API is working as we expect it to work. 
+These are run at 10am every weekday, and will alert to #cyber-security-service-health in the event that they fail.
+
 ## How to deploy
 
 Merges to master in this repo will trigger a deploy in [Concourse](https://cd.gds-reliability.engineering/teams/cybersecurity-tools/pipelines/ggroups-to-splunk)
