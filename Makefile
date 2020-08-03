@@ -24,6 +24,9 @@ test: checks terraform
 	pipenv run pytest -sqx --disable-warnings
 	echo "✔️ Tests passed!"
 
+contract_test:
+	pipenv run pytest lambda/contract_test.py
+
 checks:
 	echo "⏳ running pipeline..."
 	pipenv run isort --atomic -q ${CODE_DIR}
