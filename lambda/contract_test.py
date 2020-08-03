@@ -45,5 +45,5 @@ def test_google_groups_api():
         .execute()["groups"][0]["email"]
     )
     groups = groups_google_client.groups().get(groupUniqueId=group_id).execute()
-    assert groups != {}
+    assert groups
     assert groups["email"]
