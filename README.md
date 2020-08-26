@@ -3,7 +3,9 @@ This repo holds the infrastructure for a Lambda which exports Google groups meta
 
 ## How to Find the Data
 The Lambda sends the Google groups data to splunk, find it with the following search term:
-`index="cyber_services_prod" sourcetype="aws:lambda:send_ggroup_data_to_splunk"`
+`index="cyber_services_prod" sourcetype="aws:lambda:send_ggroup_data_to_splunk"`.
+
+The data conforms to the [Google Groups Settings schema](https://developers.google.com/admin-sdk/groups-settings/v1/reference/groups).
 
 ## Prerequisites
 
@@ -20,14 +22,14 @@ pipenv shell
 ## Running tests
 
 Tests are run from the root of the repository by running:
- 
+
 `make tests`
 
 This command will run terraform format, terraform validate, flake8 and the unit tests.
 
 ## Contract Tests
 
-Contract tests are run on the project's concourse pipeline to check that the Google API is working as we expect it to work. 
+Contract tests are run on the project's concourse pipeline to check that the Google API is working as we expect it to work.
 These are run at 10am every weekday, and will alert to #cyber-security-service-health in the event that they fail.
 
 ## How to deploy
