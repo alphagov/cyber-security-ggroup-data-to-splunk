@@ -36,15 +36,15 @@ resource "aws_lambda_function" "send_ggroup_data_to_splunk" {
   tags = local.tags
 }
 
-resource "aws_cloudwatch_event_rule" "send_ggroup_data_to_splunk_24_hours" {
+resource "aws_cloudwatch_event_rule" "send_ggroup_data_to_splunk_every_hour" {
   name                = "ggroup-to-splunk-24-hours"
   description         = "Send google groups data to splunk every 24 hours"
-  schedule_expression = "cron(0 23 * * ? *)"
+  schedule_expression = "cron(0 * * * ? *)"
   tags                = local.tags
 }
 
-resource "aws_cloudwatch_event_target" "send_ggroup_data_to_splunk_24_hours_tg" {
-  rule = aws_cloudwatch_event_rule.send_ggroup_data_to_splunk_24_hours.name
+resource "aws_cloudwatch_event_target" "send_ggroup_data_to_splunk_every_hour_tg" {
+  rule = aws_cloudwatch_event_rule.send_ggroup_data_to_splunk_every_hour.name
   arn  = aws_lambda_function.send_ggroup_data_to_splunk.arn
 }
 
@@ -53,5 +53,5 @@ resource "aws_lambda_permission" "send_ggroup_data_to_splunk_allow_cloudwatch" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.send_ggroup_data_to_splunk.function_name
   principal     = "events.amazonaws.com"
-  source_arn    = aws_cloudwatch_event_rule.send_ggroup_data_to_splunk_24_hours.arn
+  source_arn    = aws_cloudwatch_event_rule.send_ggroup_data_to_splunk_every_hour.arn
 }
