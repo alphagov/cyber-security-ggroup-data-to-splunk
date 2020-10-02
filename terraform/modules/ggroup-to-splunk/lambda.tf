@@ -39,7 +39,7 @@ resource "aws_lambda_function" "send_ggroup_data_to_splunk" {
 resource "aws_cloudwatch_event_rule" "send_ggroup_data_to_splunk_24_hours" {
   name                = "ggroup-to-splunk-24-hours"
   description         = "Send google groups data to splunk every 24 hours"
-  schedule_expression = "cron(0 23 * * ? *)"
+  schedule_expression = "cron(0 * * * ? *)"
   tags                = local.tags
 }
 
