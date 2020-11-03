@@ -52,7 +52,7 @@ jobs:
     plan:
       - *every-weekday
       - get: ggroup-data-to-splunk-git
-      - task: contractitest
+      - task: contract-test
         config:
           inputs:
           - name: ggroup-data-to-splunk-git
