@@ -25,7 +25,6 @@ variable "lambda_role_name" {
   type = string
 }
 
-
 variable "credentials_prefix" {
   type    = string
   default = ""
