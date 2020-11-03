@@ -1,23 +1,7 @@
-data "aws_ssm_parameter" "google_credentials" {
-  name = "/google_data_to_splunk/credentials"
-}
-
-data "aws_ssm_parameter" "subject_email" {
-  name = "/google_data_to_splunk/subject_email"
-}
-
-data "aws_ssm_parameter" "groups_scope" {
-  name = "/google_data_to_splunk/groups_scope"
-}
-
-data "aws_ssm_parameter" "admin_readonly_scope" {
-  name = "/google_data_to_splunk/admin_readonly_scope"
-}
-
 resource "aws_lambda_function" "send_ggroup_data_to_splunk" {
   filename         = var.lambda_zip_location
   source_code_hash = filebase64sha256(var.lambda_zip_location)
-  function_name    = "send_ggroup_data_to_splunk"
+  function_name    = "send_ggroup_data_to_splunk${var.suffix}"
   role             = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.lambda_role_name}"
   handler          = "lambda_function.main"
   runtime          = var.runtime
@@ -26,7 +10,7 @@ resource "aws_lambda_function" "send_ggroup_data_to_splunk" {
 
   environment {
     variables = {
-      CREDENTIALS  = "/google_data_to_splunk/credentials"
+      CREDENTIALS  = "${var.credentials_prefix}/google_data_to_splunk/credentials"
       SUBJECT      = "/google_data_to_splunk/subject_email"
       ADMIN_SCOPE  = "/google_data_to_splunk/admin_readonly_scope"
       GROUPS_SCOPE = "/google_data_to_splunk/groups_scope"
