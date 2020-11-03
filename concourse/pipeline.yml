@@ -48,11 +48,11 @@ blocks:
     get: every-weekday-resource
     trigger: true
 jobs:
-  - name: google_contract_tests
+  - name: google-contract-tests
     plan:
       - *every-weekday
       - get: ggroup-data-to-splunk-git
-      - task: contract_test
+      - task: contractitest
         config:
           inputs:
           - name: ggroup-data-to-splunk-git
@@ -87,7 +87,7 @@ jobs:
             message: "Ggroup data to splunk contract tests failed."
             health: unhealthy
 
-  - name: code_validation
+  - name: code-validation
     serial: false
     plan:
       - get: ggroup-data-to-splunk-git
@@ -126,12 +126,13 @@ jobs:
             message: "Ggroup data to splunk validation failed"
             health: unhealthy
 
-  - name: ggroup_data_to_splunk_dev_deploy
+  - name: ggroup-data-to-splunk-dev-deploy
     serial: true
     plan:
       - get: ggroup-data-to-splunk-git
-        passed: [code_validation]
-      - task: terraform_deploy
+        trigger: true
+        passed: [code-validation]
+      - task: terraform-deploy
         config:
           inputs:
           - name: ggroup-data-to-splunk-git
@@ -166,15 +167,16 @@ jobs:
         on_failure:
           <<: *health_status_notify
           params:
-            message: "Failed to deploy Ggroup data to splunk validation failed dev."
+            message: "Failed to deploy Ggroup data to splunk failed dev deploy."
             health: unhealthy
 
-  - name: ggroup_data_to_splunk_prod_deploy
+  - name: ggroup-data-to-splunk-prod-deploy
     serial: true
     plan:
       - get: ggroup-data-to-splunk-git
-        passed: [ggroup_data_to_splunk_dev_deploy]
-      - task: terraform_prod_deploy
+        trigger: true
+        passed: [ggroup-data-to-splunk-dev-deploy]
+      - task: terraform-prod-deploy
         config:
           inputs:
           - name: ggroup-data-to-splunk-git
@@ -204,10 +206,54 @@ jobs:
         on_success:
           <<: *health_status_notify
           params:
-            message: "Ggroup data to splunk validation dev deployed successfully."
+            message: "Ggroup data to splunk prod deployed successfully."
             health: healthy
         on_failure:
           <<: *health_status_notify
           params:
-            message: "Failed to deploy Ggroup data to splunk validation failed dev."
+            message: "Failed to deploy Ggroup data to splunk failed to deploy to prod."
+            health: unhealthy
+
+  - name: ggroup-data-to-splunk-prod-co-deploy
+    serial: true
+    plan:
+      - get: ggroup-data-to-splunk-git
+        trigger: true
+        passed: [ggroup-data-to-splunk-dev-deploy]
+      - task: terraform-prod-co-deploy
+        config:
+          inputs:
+          - name: ggroup-data-to-splunk-git
+          platform: linux
+          image_resource:
+            type: docker-image
+            source:
+              repository: gdscyber/cyber-security-concourse-base-image
+              username: ((docker_hub_username))
+              password: ((docker_hub_password))
+          run:
+            path: /bin/bash
+            args:
+              - -c
+              - |
+                source /usr/local/bin/sts-assume-role.sh 'arn:aws:iam::779799343306:role/ggroup_data_to_splunk_concourse_role' 'eu-west-2'
+                  
+                pip install pipenv
+                cd ggroup-data-to-splunk-git/lambda
+                pipenv --python 3.7
+                pipenv install
+                
+                cd ..
+                export AWS_DEFAULT_REGION=eu-west-2
+                make zip
+                make terraform_apply_prod_co
+        on_success:
+          <<: *health_status_notify
+          params:
+            message: "Ggroup data to splunk prod co deployed successfully."
+            health: healthy
+        on_failure:
+          <<: *health_status_notify
+          params:
+            message: "Failed to deploy Ggroup data to splunk failed to deploy to prod co."
             health: unhealthy
