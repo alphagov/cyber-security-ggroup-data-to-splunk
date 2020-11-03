@@ -211,7 +211,7 @@ jobs:
         on_failure:
           <<: *health_status_notify
           params:
-            message: "Failed to deploy Ggroup data to splunk failed to deploy to prod."
+            message: "Failed to deploy Ggroup data to splunk failed to prod."
             health: unhealthy
 
   - name: ggroup-data-to-splunk-prod-co-deploy
@@ -250,10 +250,10 @@ jobs:
         on_success:
           <<: *health_status_notify
           params:
-            message: "Ggroup data to splunk prod co deployed successfully."
+            message: "Ggroup data to splunk prod CO deployed successfully."
             health: healthy
         on_failure:
           <<: *health_status_notify
           params:
-            message: "Failed to deploy Ggroup data to splunk failed to deploy to prod co."
+            message: "Failed to deploy Ggroup data to splunk failed to prod for CO."
             health: unhealthy
