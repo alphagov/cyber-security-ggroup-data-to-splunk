@@ -101,3 +101,9 @@ terraform_plan_prod:
 
 terraform_apply_prod:
 	@cd terraform/deployments/prod; terraform init; terraform apply -auto-approve
+
+terraform_plan_prod_co:
+	@cd terraform/deployments/prod_co; terraform init; terraform plan
+
+terraform_apply_prod_co:
+	@cd terraform/deployments/prod_co; terraform init; terraform apply -auto-approve
