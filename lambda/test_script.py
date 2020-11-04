@@ -103,6 +103,7 @@ def test_build_group_dict(
     os.environ["CREDENTIALS"] = "credentials_param"
     os.environ["SUBJECT"] = "subject_email_param"
     os.environ["test_groups_scope"] = "test_groups_scope"
+    os.environ["DOMAIN"] = "digital.cabinet-office.gov.uk"
 
     actual = build_group_dict("http://api.com", "v3", "test_groups_scope")
     expected = {
@@ -170,6 +171,7 @@ def test_get_group_info(
     os.environ["CREDENTIALS"] = "credentials_param"
     os.environ["SUBJECT"] = "subject_email_param"
     os.environ["test_groups_scope"] = "test_groups_scope"
+    os.environ["DOMAIN"] = "digital.cabinet-office.gov.uk"
 
     group_dict = {"group1": "group1@email.com", "group2": "group2@email.com"}
 

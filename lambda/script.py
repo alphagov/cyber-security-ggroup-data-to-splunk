@@ -82,11 +82,7 @@ def build_group_dict(api: str, api_version: str, scope: str) -> Dict[str, str]:
     while True:
         groups = (
             google_client.groups()
-            .list(
-                pageToken=nextPageToken,
-                domain="digital.cabinet-office.gov.uk",
-                maxResults=200,
-            )
+            .list(pageToken=nextPageToken, domain=os.environ["DOMAIN"], maxResults=200,)
             .execute()
         )
         if groups:

@@ -8,4 +8,5 @@ module "ggroup-to-splunk-prod-co" {
   lambda_timeout      = 900
   credentials_prefix  = "/cabinetoffice.gov.uk"
   suffix              = "_co"
+  domain              = "cabinetoffice.gov.uk"
 }
