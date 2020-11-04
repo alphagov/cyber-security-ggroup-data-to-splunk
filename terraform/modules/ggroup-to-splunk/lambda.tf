@@ -11,7 +11,7 @@ resource "aws_lambda_function" "send_ggroup_data_to_splunk" {
   environment {
     variables = {
       CREDENTIALS  = "${var.credentials_prefix}/google_data_to_splunk/credentials"
-      SUBJECT      = "/google_data_to_splunk/subject_email"
+      SUBJECT      = "${var.credentials_prefix}/google_data_to_splunk/subject_email"
       ADMIN_SCOPE  = "/google_data_to_splunk/admin_readonly_scope"
       GROUPS_SCOPE = "/google_data_to_splunk/groups_scope"
     }
