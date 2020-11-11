@@ -104,7 +104,6 @@ def build_group_dict(api: str, api_version: str, scope: str) -> Dict[str, str]:
 
         except HttpError as e:
             print(f"Http error getting group ids: {e}")
-            continue
 
     return group_ids
 
@@ -131,7 +130,6 @@ def get_group_info(
             )
         except HttpError as e:
             print(f"Http error for group {group_id}: {e}")
-            continue
 
     return group_list
 
