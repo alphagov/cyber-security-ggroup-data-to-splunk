@@ -34,3 +34,7 @@ variable "suffix" {
   type    = string
   default = ""
 }
+
+variable "domain" {
+  type = string
+}

@@ -6,4 +6,5 @@ module "ggroup-to-splunk-prod" {
   lambda_memory       = 256
   lambda_role_name    = "ggroup_lambda_exec_role"
   lambda_timeout      = 900
+  domain              = "digital.cabinet-office.gov.uk"
 }
