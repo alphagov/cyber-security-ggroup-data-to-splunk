@@ -1,5 +1,5 @@
 resource "aws_cloudwatch_log_subscription_filter" "log_subscription" {
-  name = "log_subscription"
+  name = "log_subscription${var.suffix}"
 
   log_group_name  = aws_cloudwatch_log_group.send_ggroup_data_to_splunk.name
   filter_pattern  = ""
