@@ -5,6 +5,7 @@ from typing import Dict, List
 import boto3  # type: ignore
 import googleapiclient.discovery  # type: ignore
 from google.oauth2 import service_account  # type: ignore
+from googleapiclient.errors import HttpError  # type: ignore
 
 ssm_client = boto3.client("ssm")
 
@@ -80,21 +81,30 @@ def build_group_dict(api: str, api_version: str, scope: str) -> Dict[str, str]:
     nextPageToken = None
 
     while True:
-        groups = (
-            google_client.groups()
-            .list(pageToken=nextPageToken, domain=os.environ["DOMAIN"], maxResults=200,)
-            .execute()
-        )
-        if groups:
-            for g in groups["groups"]:
-                group_names = g["name"]
-                group_id = g["email"]
-                group_ids[group_names] = group_id
+        try:
+            groups = (
+                google_client.groups()
+                .list(
+                    pageToken=nextPageToken,
+                    domain=os.environ["DOMAIN"],
+                    maxResults=200,
+                )
+                .execute()
+            )
+            if groups:
+                for g in groups["groups"]:
+                    group_names = g["name"]
+                    group_id = g["email"]
+                    group_ids[group_names] = group_id
 
-            if "nextPageToken" not in groups:
-                break
-            else:
-                nextPageToken = groups["nextPageToken"]
+                if "nextPageToken" not in groups:
+                    break
+                else:
+                    nextPageToken = groups["nextPageToken"]
+
+        except HttpError as e:
+            print(f"Http error getting group ids: {e}")
+            continue
 
     return group_ids
 
@@ -113,10 +123,17 @@ def get_group_info(
         get_subject_email(os.environ["SUBJECT"]),
     )
 
-    return [
-        google_client.groups().get(groupUniqueId=group_id).execute()
-        for _, group_id in group_ids.items()
-    ]
+    group_list = []
+    for _, group_id in group_ids.items():
+        try:
+            group_list.append(
+                google_client.groups().get(groupUniqueId=group_id).execute()
+            )
+        except HttpError as e:
+            print(f"Http error for group {group_id}: {e}")
+            continue
+
+    return group_list
 
 
 def print_group_info(
