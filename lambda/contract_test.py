@@ -1,15 +1,10 @@
-from script import (
-    create_google_client,
-    get_credentials_file,
-    get_scope,
-    get_subject_email,
-)
+from script import create_google_client, get_credentials_file, get_subject_email
 
 admin_google_client = create_google_client(
     "admin",
     "directory_v1",
     get_credentials_file("/google_data_to_splunk/credentials"),
-    get_scope("/google_data_to_splunk/admin_readonly_scope"),
+    "https://www.googleapis.com/auth/admin.directory.group.readonly",
     get_subject_email("/google_data_to_splunk/subject_email"),
 )
 
@@ -17,7 +12,7 @@ groups_google_client = create_google_client(
     "groupssettings",
     "v1",
     get_credentials_file("/google_data_to_splunk/credentials"),
-    get_scope("/google_data_to_splunk/groups_scope"),
+    "https://www.googleapis.com/auth/apps.groups.settings",
     get_subject_email("/google_data_to_splunk/subject_email"),
 )
 

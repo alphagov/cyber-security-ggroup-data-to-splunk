@@ -10,15 +10,6 @@ from googleapiclient.errors import HttpError  # type: ignore
 ssm_client = boto3.client("ssm")
 
 
-def get_scope(scope: str) -> List[str]:
-    """
-    Returns the scope from AWS SSM.
-    """
-    return [
-        ssm_client.get_parameter(Name=scope, WithDecryption=True)["Parameter"]["Value"]
-    ]
-
-
 def get_subject_email(subject: str) -> str:
     """
     Returns the subject email from AWS SSM.
@@ -48,7 +39,7 @@ def create_google_client(
     api: str,
     api_version: str,
     service_account_file: str,
-    scope: List[str],
+    scope: str,
     subject: str,
     pageToken: str = None,
 ):
@@ -56,7 +47,7 @@ def create_google_client(
     Returns a given client built from a google api and api version passed in .
     """
     credentials = service_account.Credentials.from_service_account_file(
-        service_account_file, scopes=scope, subject=subject,
+        service_account_file, scopes=[scope], subject=subject,
     )
 
     google_client = googleapiclient.discovery.build(
@@ -74,7 +65,7 @@ def build_group_dict(api: str, api_version: str, scope: str) -> Dict[str, str]:
         api,
         api_version,
         get_credentials_file(os.environ["CREDENTIALS"]),
-        get_scope(os.environ[scope]),
+        scope,
         get_subject_email(os.environ["SUBJECT"]),
     )
     group_ids = {}
@@ -118,7 +109,7 @@ def get_group_info(
         api,
         api_version,
         get_credentials_file(os.environ["CREDENTIALS"]),
-        get_scope(os.environ[scope]),
+        scope,
         get_subject_email(os.environ["SUBJECT"]),
     )
 
@@ -155,6 +146,9 @@ def print_group_info(
 
 
 def main(event: Dict, context: Dict):
+    groups_scope = "https://www.googleapis.com/auth/apps.groups.settings"
+    admin_scope = "https://www.googleapis.com/auth/admin.directory.group.readonly"
+
     print_group_info(
-        "groupssettings", "v1", "GROUPS_SCOPE", "admin", "directory_v1", "ADMIN_SCOPE"
+        "groupssettings", "v1", groups_scope, "admin", "directory_v1", admin_scope
     )

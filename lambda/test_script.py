@@ -9,18 +9,9 @@ from script import (
     build_group_dict,
     get_credentials_file,
     get_group_info,
-    get_scope,
     get_subject_email,
     print_group_info,
 )
-
-
-@patch("script.ssm_client.get_parameter")
-def test_get_scope(mock_get_ssm):
-    mock_get_ssm.return_value = {"Parameter": {"Value": "test_scope_value"}}
-    expected = ["test_scope_value"]
-    actual = get_scope("test_scope")
-    assert actual == expected
 
 
 @patch("script.ssm_client.get_parameter")
@@ -48,14 +39,10 @@ def test_get_credentials_file(mock_get_ssm):
 
 
 @patch("script.get_subject_email")
-@patch("script.get_scope")
 @patch("script.get_credentials_file")
 @patch("script.create_google_client")
 def test_build_group_dict(
-    mock_create_google_client,
-    mock_get_credentials_file,
-    mock_get_scope,
-    mock_get_subject_email,
+    mock_create_google_client, mock_get_credentials_file, mock_get_subject_email,
 ):
     class GoogleClientMockClass:
         def groups():
@@ -97,12 +84,10 @@ def test_build_group_dict(
     mock_get_credentials_file.return_value = (
         "./lambda/test_assetts/expected_credentials_file.json"
     )
-    mock_get_scope.return_value = {"Parameter": {"Value": "test_scope_value"}}
     mock_get_subject_email.return_value = {"Parameter": {"Value": "test_subject_email"}}
 
     os.environ["CREDENTIALS"] = "credentials_param"
     os.environ["SUBJECT"] = "subject_email_param"
-    os.environ["test_groups_scope"] = "test_groups_scope"
     os.environ["DOMAIN"] = "digital.cabinet-office.gov.uk"
 
     actual = build_group_dict("http://api.com", "v3", "test_groups_scope")
@@ -118,14 +103,10 @@ def test_build_group_dict(
 
 
 @patch("script.get_subject_email")
-@patch("script.get_scope")
 @patch("script.get_credentials_file")
 @patch("script.create_google_client")
 def test_get_group_info(
-    mock_create_google_client,
-    mock_get_credentials_file,
-    mock_get_scope,
-    mock_get_subject_email,
+    mock_create_google_client, mock_get_credentials_file, mock_get_subject_email,
 ):
     class GoogleClientMockClass:
         def groups():
@@ -165,12 +146,10 @@ def test_get_group_info(
     mock_get_credentials_file.return_value = (
         "./lambda/test_assetts/expected_credentials_file.json"
     )
-    mock_get_scope.return_value = {"Parameter": {"Value": "test_scope_value"}}
     mock_get_subject_email.return_value = {"Parameter": {"Value": "test_subject_email"}}
 
     os.environ["CREDENTIALS"] = "credentials_param"
     os.environ["SUBJECT"] = "subject_email_param"
-    os.environ["test_groups_scope"] = "test_groups_scope"
     os.environ["DOMAIN"] = "digital.cabinet-office.gov.uk"
 
     group_dict = {"group1": "group1@email.com", "group2": "group2@email.com"}
