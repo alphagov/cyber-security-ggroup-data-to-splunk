@@ -26,7 +26,7 @@ resource "aws_cloudwatch_event_rule" "send_ggroup_data_to_splunk_every_hour" {
   tags                = local.tags
 }
 
-resource "aws_cloudwatch_event_target" "send_ggroup_data_to_splunk_every_hour_tg" {
+resource "aws_cloudwatch_event_target" "send_ggroup_data_to_splunk_24_hours_tg" {
   rule = aws_cloudwatch_event_rule.send_ggroup_data_to_splunk_every_hour.name
   arn  = aws_lambda_function.send_ggroup_data_to_splunk.arn
 }
