@@ -1,0 +1,13 @@
+version: 0.2
+
+phases:
+  build:
+    commands:
+      - set -e
+      - pip install pipenv
+      - cd ggroup-data-to-splunk-git/lambda
+      - pipenv --python 3.7
+      - pipenv install --dev
+      - cd ..
+      - export AWS_DEFAULT_REGION=eu-west-2
+      - make test
