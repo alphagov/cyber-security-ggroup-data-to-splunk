@@ -9,5 +9,4 @@ phases:
       - pipenv --python 3.7
       - pipenv install --dev
       - cd ..
-      - export AWS_DEFAULT_REGION=eu-west-2
       - make test
