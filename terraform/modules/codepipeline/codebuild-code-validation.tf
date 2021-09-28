@@ -1,5 +1,5 @@
-resource "aws_codebuild_project" "codepipeline-code-validation" {
-  name        = "codepipeline-code-validation"
+resource "aws_codebuild_project" "code-validation" {
+  name        = "codepipeline-${var.pipeline_name}-code-validation"
   description = "Run tests against Python and Terraform to make sure it is valid"
 
   service_role = data.aws_iam_role.pipeline_role.arn

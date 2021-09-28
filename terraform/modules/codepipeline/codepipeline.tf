@@ -37,7 +37,7 @@ resource "aws_codepipeline" "google-groups-to-splunk" {
       version         = "1"
       input_artifacts = ["google-groups-to-splunk"]
       configuration = {
-        ProjectName = aws_codebuild_project.codepipeline-code-validation.name
+        ProjectName = aws_codebuild_project.code-validation.name
       }
     }
   }
