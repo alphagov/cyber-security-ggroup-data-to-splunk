@@ -16,3 +16,13 @@ variable "codebuild_image" {
   type    = string
   default = "gdscyber/cyber-security-cd-base-image:latest"
 }
+
+variable "dev_deployment_account_id" {
+   type = string
+   default = "489877524855"
+}
+
+variable "dev_deployment_role_name" {
+   type = string
+   default = "CodePipelineDeployerRole_489877524855"
+}
