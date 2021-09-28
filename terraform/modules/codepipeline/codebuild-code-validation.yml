@@ -5,7 +5,7 @@ phases:
     commands:
       - set -e
       - pip install pipenv
-      - cd ggroup-data-to-splunk-git/lambda
+      - cd lambda
       - pipenv --python 3.7
       - pipenv install --dev
       - cd ..
