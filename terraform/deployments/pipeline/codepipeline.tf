@@ -41,4 +41,21 @@ resource "aws_codepipeline" "google-groups-to-splunk" {
       }
     }
   }
+
+  stage {
+    name = "BuildZip"
+
+    action {
+      name = "BuildZip"
+      category = "Build"
+      owner = "AWS"
+      provider = "CodeBuild"
+      version = "1"
+      input_artifacts = ["google-groups-to-splunk"]
+      output_artifacts = ["lambda-zip"]
+      configuration = {
+        ProjectName = aws_codebuild_project.build-zip.name
+      }
+    }
+  }
 }
