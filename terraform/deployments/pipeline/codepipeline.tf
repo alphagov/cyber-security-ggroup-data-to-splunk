@@ -17,7 +17,7 @@ resource "aws_codepipeline" "google-groups-to-splunk" {
       owner            = "AWS"
       provider         = "CodeStarSourceConnection"
       version          = "1"
-      output_artifacts = ["google-groups-to-splunk"]
+      output_artifacts = ["google_groups_to_splunk"]
       configuration = {
         ConnectionArn    = "arn:aws:codestar-connections:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:connection/${var.codestar_connection_id}"
         FullRepositoryId = "alphagov/cyber-security-ggroup-data-to-splunk"
@@ -35,7 +35,7 @@ resource "aws_codepipeline" "google-groups-to-splunk" {
       owner           = "AWS"
       provider        = "CodeBuild"
       version         = "1"
-      input_artifacts = ["google-groups-to-splunk"]
+      input_artifacts = ["google_groups_to_splunk"]
       configuration = {
         ProjectName = aws_codebuild_project.code-validation.name
       }
@@ -51,10 +51,28 @@ resource "aws_codepipeline" "google-groups-to-splunk" {
       owner = "AWS"
       provider = "CodeBuild"
       version = "1"
-      input_artifacts = ["google-groups-to-splunk"]
-      output_artifacts = ["lambda-zip"]
+      input_artifacts = ["google_groups_to_splunk"]
+      output_artifacts = ["lambda_zip"]
       configuration = {
         ProjectName = aws_codebuild_project.build-zip.name
+      }
+    }
+  }
+
+  stage {
+    name = "Deploy"
+
+    action {
+      name = "dev-deploy"
+      category = "Build"
+      owner = "AWS"
+      provider = "CodeBuild"
+      version = "1"
+      run_order = 1
+      input_artifacts = ["google_groups_to_splunk", "lambda_zip"]
+      configuration = {
+        PrimarySource = "google_groups_to_splunk"
+        ProjectName = module.terraform_apply_dev.project_name
       }
     }
   }
