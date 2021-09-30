@@ -28,3 +28,13 @@ variable "dev_deployment_role_name" {
    type = string
    default = "CodePipelineDeployerRole_489877524855"
 }
+
+variable "prod_deployment_account_id" {
+   type = string
+   default = "779799343306"
+}
+
+variable "prod_deployment_role_name" {
+   type = string
+   default = "CodePipelineDeployerRole_779799343306"
+}
