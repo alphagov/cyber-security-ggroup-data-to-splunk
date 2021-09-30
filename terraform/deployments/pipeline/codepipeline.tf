@@ -89,5 +89,18 @@ resource "aws_codepipeline" "google-groups-to-splunk" {
         ProjectName = module.terraform_apply_prod.project_name
       }
     }
+    action {
+      name = "prod-co-deploy"
+      category = "Build"
+      owner = "AWS"
+      provider = "CodeBuild"
+      version = "1"
+      run_order = 2
+      input_artifacts = ["google_groups_to_splunk", "lambda_zip"]
+      configuration = {
+        PrimarySource = "google_groups_to_splunk"
+        ProjectName = module.terraform_apply_prod_co.project_name
+      }
+    }
   }
 }
