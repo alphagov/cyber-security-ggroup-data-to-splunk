@@ -103,4 +103,22 @@ resource "aws_codepipeline" "google-groups-to-splunk" {
       }
     }
   }
+
+  stage {
+    name = "Update"
+
+    action {
+      name             = "UpdatePipeline"
+      category         = "Build"
+      owner            = "AWS"
+      provider         = "CodeBuild"
+      version          = "1"
+      input_artifacts  = ["google_groups_to_splunk"]
+      output_artifacts = []
+
+      configuration = {
+        ProjectName = module.self-update.project_name
+      }
+    }
+  }
 }
