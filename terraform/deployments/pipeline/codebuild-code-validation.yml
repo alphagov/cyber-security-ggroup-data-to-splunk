@@ -1,0 +1,15 @@
+version: 0.2
+
+env:
+  shell: bash
+
+phases:
+  build:
+    commands:
+      - set -e
+      - pip install pipenv
+      - cd lambda
+      - pipenv --python 3.7
+      - pipenv install --dev
+      - cd ..
+      - make test

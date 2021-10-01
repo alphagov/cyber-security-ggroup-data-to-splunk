@@ -1,0 +1,23 @@
+version: 0.2
+
+env:
+  shell: bash
+
+phases:
+  build:
+    commands:
+      - set -e
+      - pip install pipenv
+      - cd lambda
+      - pipenv --python 3.7
+      - pipenv install
+      - cd ..
+      - make zip
+      - mv get_data_for_google_groups.zip /opt
+
+artifacts:
+  name: lambda_zip
+  files:
+    - get_data_for_google_groups.zip
+  discard-paths: no
+  base-directory: /opt

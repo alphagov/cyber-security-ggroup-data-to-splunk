@@ -1,0 +1,18 @@
+version: 0.2
+
+env:
+  shell: bash
+
+phases:
+  build:
+    commands:
+      - set -e
+      - echo '[INFO] Assuming TF Deployer IAM role...';
+      - role_arn="arn:aws:iam::${AWS_ACCOUNT_ID}:role/${ROLE_NAME}";
+      - source /usr/local/bin/sts-assume-role.sh "${role_arn}" "${AWS_DEFAULT_REGION}"
+      - pip install pipenv
+      - cd lambda
+      - pipenv --python 3.7
+      - pipenv install --dev
+      - cd ..
+      - make contract_test
