@@ -121,7 +121,7 @@ def get_group_info(
             )
         except HttpError as e:
             print(f"Http error for group {group_id}: {e}")
-            if "exceeded" in e.reason.lower():
+            if "exceeded" in "{e}".lower():
                 print("Rate limit exceeded, stopping loop over groups...")
                 break
 
