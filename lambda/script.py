@@ -1,6 +1,6 @@
 import json
 import os
-from typing import Dict, List
+from typing import Dict, List, Optional, Any
 
 import boto3  # type: ignore
 import googleapiclient.discovery  # type: ignore
@@ -57,7 +57,13 @@ def create_google_client(
     return google_client
 
 
-def build_group_dict(api: str, api_version: str, scope: str) -> Dict[str, str]:
+def build_group_dict(
+    api: str,
+    api_version: str,
+    scope: str,
+    nextPageToken: Optional[str],
+    lambda_function_name: str,
+) -> Dict[str, str]:
     """
     Returns a dictionary of google groups names and their ID.
     """
@@ -69,32 +75,28 @@ def build_group_dict(api: str, api_version: str, scope: str) -> Dict[str, str]:
         get_subject_email(os.environ["SUBJECT"]),
     )
     group_ids = {}
-    nextPageToken = None
 
-    while True:
-        try:
-            groups = (
-                google_client.groups()
-                .list(
-                    pageToken=nextPageToken,
-                    domain=os.environ["DOMAIN"],
-                    maxResults=200,
+    try:
+        groups = (
+            google_client.groups()
+            .list(pageToken=nextPageToken, domain=os.environ["DOMAIN"], maxResults=200,)
+            .execute()
+        )
+        if groups:
+            for g in groups["groups"]:
+                group_names = g["name"]
+                group_id = g["email"]
+                group_ids[group_names] = group_id
+
+            if "nextPageToken" in groups:
+                lambda_payload = json.dumps({"nextPageToken": groups["nextPageToken"]})
+                lambda_client = boto3.client("lambda")
+                lambda_client.invoke(
+                    FunctionName=lambda_function_name, InvocationType="Event", Payload=lambda_payload
                 )
-                .execute()
-            )
-            if groups:
-                for g in groups["groups"]:
-                    group_names = g["name"]
-                    group_id = g["email"]
-                    group_ids[group_names] = group_id
 
-                if "nextPageToken" not in groups:
-                    break
-                else:
-                    nextPageToken = groups["nextPageToken"]
-
-        except HttpError as e:
-            print(f"Http error getting group ids: {e}")
+    except HttpError as e:
+        print(f"Http error getting group ids: {e}")
 
     return group_ids
 
@@ -135,6 +137,8 @@ def print_group_info(
     admin_api_name: str,
     admin_api_version: str,
     admin_scope: str,
+    nextPageToken: Optional[str],
+    lambda_function_name: str,
 ) -> None:
     """
     Prints each group's information so that it can be picked up by Cloudwatch Logs
@@ -143,15 +147,30 @@ def print_group_info(
         group_api_name,
         group_api_version,
         group_scope,
-        build_group_dict(admin_api_name, admin_api_version, admin_scope),
+        build_group_dict(
+            admin_api_name,
+            admin_api_version,
+            admin_scope,
+            nextPageToken,
+            lambda_function_name,
+        ),
     ):
         print(json.dumps(group))
 
 
-def main(event: Dict, context: Dict):
+def main(event: Dict, context: Any):
     groups_scope = "https://www.googleapis.com/auth/apps.groups.settings"
     admin_scope = "https://www.googleapis.com/auth/admin.directory.group.readonly"
+    nextPageToken = event.get("nextPageToken", None)
+    lambda_function_name: str = context.function_name
 
     print_group_info(
-        "groupssettings", "v1", groups_scope, "admin", "directory_v1", admin_scope
+        "groupssettings",
+        "v1",
+        groups_scope,
+        "admin",
+        "directory_v1",
+        admin_scope,
+        nextPageToken,
+        lambda_function_name,
     )
