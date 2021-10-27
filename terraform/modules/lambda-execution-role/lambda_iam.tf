@@ -27,6 +27,18 @@ data "aws_iam_policy_document" "lambda_exec_policy" {
       "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter/google_data_to_splunk/groups_scope"
     ]
   }
+
+  statement {
+    effect = "Allow"
+    actions = [
+      "lambda:InvokeFunction"
+    ]
+
+    resources = [
+      "arn:aws:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:send_ggroup_data_to_splunk",
+      "arn:aws:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:send_ggroup_data_to_splunk_co"
+    ]
+  }
 }
 
 resource "aws_iam_role" "lambda_exec_role" {
