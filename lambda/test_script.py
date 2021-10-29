@@ -15,6 +15,7 @@ from script import (
 
 
 class GoogleClientGroupsMockClass:
+    @staticmethod
     def groups():
         class GoogleClientList:
             def list(pageToken, domain, maxResults):
