@@ -8,6 +8,7 @@ from google.oauth2 import service_account  # type: ignore
 from googleapiclient.errors import HttpError  # type: ignore
 
 ssm_client = boto3.client("ssm")
+lambda_client = boto3.client("lambda")
 
 
 def get_subject_email(subject: str) -> str:
@@ -90,7 +91,6 @@ def build_group_dict(
 
             if "nextPageToken" in groups:
                 lambda_payload = json.dumps({"nextPageToken": groups["nextPageToken"]})
-                lambda_client = boto3.client("lambda")
                 lambda_client.invoke(
                     FunctionName=lambda_function_name,
                     InvocationType="Event",
