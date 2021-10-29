@@ -6,11 +6,11 @@ variable "pipeline_name" {
 variable "docker_hub_credentials" {
   description = "Name of the secret in SSM that stores the Docker Hub credentials"
   type        = string
-  default = "docker_hub_credentials"
+  default     = "docker_hub_credentials"
 }
 
 variable "codestar_connection_id" {
-  type = string
+  type    = string
   default = "51c5be90-8c8f-4d32-8be4-18b8f05c802c"
 }
 
@@ -20,21 +20,21 @@ variable "codebuild_image" {
 }
 
 variable "dev_deployment_account_id" {
-   type = string
-   default = "489877524855"
+  type    = string
+  default = "489877524855"
 }
 
 variable "dev_deployment_role_name" {
-   type = string
-   default = "CodePipelineDeployerRole_489877524855"
+  type    = string
+  default = "CodePipelineDeployerRole_489877524855"
 }
 
 variable "prod_deployment_account_id" {
-   type = string
-   default = "779799343306"
+  type    = string
+  default = "779799343306"
 }
 
 variable "prod_deployment_role_name" {
-   type = string
-   default = "CodePipelineDeployerRole_779799343306"
+  type    = string
+  default = "CodePipelineDeployerRole_779799343306"
 }

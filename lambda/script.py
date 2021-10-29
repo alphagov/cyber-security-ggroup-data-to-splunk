@@ -1,6 +1,6 @@
 import json
 import os
-from typing import Dict, List, Optional, Any
+from typing import Any, Dict, List, Optional
 
 import boto3  # type: ignore
 import googleapiclient.discovery  # type: ignore
@@ -92,7 +92,9 @@ def build_group_dict(
                 lambda_payload = json.dumps({"nextPageToken": groups["nextPageToken"]})
                 lambda_client = boto3.client("lambda")
                 lambda_client.invoke(
-                    FunctionName=lambda_function_name, InvocationType="Event", Payload=lambda_payload
+                    FunctionName=lambda_function_name,
+                    InvocationType="Event",
+                    Payload=lambda_payload,
                 )
 
     except HttpError as e:

@@ -10,6 +10,6 @@ module "ggroup-to-splunk-dev" {
 }
 
 module "lambda-execution-role" {
-  source              = "../../modules/lambda-execution-role"
-  environment         = "staging"
+  source      = "../../modules/lambda-execution-role"
+  environment = "staging"
 }

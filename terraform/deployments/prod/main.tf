@@ -10,6 +10,6 @@ module "ggroup-to-splunk-prod" {
 }
 
 module "lambda-execution-role" {
-  source              = "../../modules/lambda-execution-role"
-  environment         = "production"
+  source      = "../../modules/lambda-execution-role"
+  environment = "production"
 }
