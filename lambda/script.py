@@ -1,6 +1,7 @@
 import json
 import os
-from typing import Any, Dict, List, Optional
+import time
+from typing import Any, Dict, List, Optional, Tuple
 
 import boto3  # type: ignore
 import googleapiclient.discovery  # type: ignore
@@ -59,14 +60,12 @@ def create_google_client(
 
 
 def build_group_dict(
-    api: str,
-    api_version: str,
-    scope: str,
-    nextPageToken: Optional[str],
-    lambda_function_name: str,
-) -> Dict[str, str]:
+    api: str, api_version: str, scope: str, nextPageToken: Optional[str],
+) -> Tuple[Dict[str, str], Optional[str]]:
     """
-    Returns a dictionary of google groups names and their ID.
+    Returns two objects:
+    - a dictionary of google groups names and their ID
+    - a payload for an invocation of this lambda (either None or a JSON encoded string)
     """
     google_client = create_google_client(
         api,
@@ -76,6 +75,7 @@ def build_group_dict(
         get_subject_email(os.environ["SUBJECT"]),
     )
     group_ids = {}
+    lambda_payload = None
 
     try:
         groups = (
@@ -91,16 +91,11 @@ def build_group_dict(
 
             if "nextPageToken" in groups:
                 lambda_payload = json.dumps({"nextPageToken": groups["nextPageToken"]})
-                lambda_client.invoke(
-                    FunctionName=lambda_function_name,
-                    InvocationType="Event",
-                    Payload=lambda_payload,
-                )
 
     except HttpError as e:
         print(f"Http error getting group ids: {e}")
 
-    return group_ids
+    return group_ids, lambda_payload
 
 
 def get_group_info(
@@ -121,13 +116,19 @@ def get_group_info(
     for _, group_id in group_ids.items():
         try:
             group_list.append(
-                google_client.groups().get(groupUniqueId=group_id).execute()
+                google_client.groups()
+                .get(groupUniqueId=group_id)
+                .execute(num_retries=8)  # This is supposed to be an exponential retry
             )
         except HttpError as e:
             print(f"Http error for group {group_id}: {e}")
             if "exceeded" in f"{e}".lower():
-                print("Rate limit exceeded, stopping loop over groups...")
-                break
+                if "Queries per day" in f"{e}":
+                    print("Queries per day limit exceeded")
+                    break
+                if "Queries per minute" in f"{e}":
+                    print("Queries per minute limit exceeded")
+                    # time.sleep(61)
 
     return group_list
 
@@ -140,24 +141,21 @@ def print_group_info(
     admin_api_version: str,
     admin_scope: str,
     nextPageToken: Optional[str],
-    lambda_function_name: str,
-) -> None:
+) -> Optional[str]:
     """
-    Prints each group's information so that it can be picked up by Cloudwatch Logs
+    Prints each group's information so that it can be picked up by Cloudwatch Logs, and
+    returns the lambda_payload for future invocations of the lambda
     """
-    for group in get_group_info(
-        group_api_name,
-        group_api_version,
-        group_scope,
-        build_group_dict(
-            admin_api_name,
-            admin_api_version,
-            admin_scope,
-            nextPageToken,
-            lambda_function_name,
-        ),
-    ):
+    group_ids, lambda_payload = build_group_dict(
+        admin_api_name, admin_api_version, admin_scope, nextPageToken,
+    )
+    group_list = get_group_info(
+        group_api_name, group_api_version, group_scope, group_ids
+    )
+    for group in group_list:
         print(json.dumps(group))
+
+    return lambda_payload
 
 
 def main(event: Dict, context: Any):
@@ -166,7 +164,7 @@ def main(event: Dict, context: Any):
     nextPageToken = event.get("nextPageToken", None)
     lambda_function_name: str = context.function_name
 
-    print_group_info(
+    lambda_payload = print_group_info(
         "groupssettings",
         "v1",
         groups_scope,
@@ -174,5 +172,10 @@ def main(event: Dict, context: Any):
         "directory_v1",
         admin_scope,
         nextPageToken,
-        lambda_function_name,
+    )
+
+    lambda_client.invoke(
+        FunctionName=lambda_function_name,
+        InvocationType="Event",
+        Payload=lambda_payload,
     )
