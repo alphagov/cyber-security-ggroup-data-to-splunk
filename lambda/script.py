@@ -1,6 +1,5 @@
 import json
 import os
-import time
 from typing import Any, Dict, List, Optional, Tuple
 
 import boto3  # type: ignore
@@ -128,7 +127,6 @@ def get_group_info(
                     break
                 if "Queries per minute" in f"{e}":
                     print("Queries per minute limit exceeded")
-                    # time.sleep(61)
 
     return group_list
 

@@ -74,15 +74,11 @@ def test_get_credentials_file(mock_get_ssm):
     open(actual_credentials_file, "w").close()
 
 
-@patch("script.lambda_client.invoke")
 @patch("script.get_subject_email")
 @patch("script.get_credentials_file")
 @patch("script.create_google_client")
 def test_build_group_dict_start_of_groups(
-    mock_create_google_client,
-    mock_get_credentials_file,
-    mock_get_subject_email,
-    mock_lambda_invocation,
+    mock_create_google_client, mock_get_credentials_file, mock_get_subject_email,
 ):
 
     mock_create_google_client.return_value = GoogleClientGroupsMockClass
@@ -90,32 +86,25 @@ def test_build_group_dict_start_of_groups(
         "./lambda/test_assetts/expected_credentials_file.json"
     )
     mock_get_subject_email.return_value = {"Parameter": {"Value": "test_subject_email"}}
-    mock_lambda_invocation.return_value = {"StatusCode": 202}
 
     os.environ["CREDENTIALS"] = "credentials_param"
     os.environ["SUBJECT"] = "subject_email_param"
     os.environ["DOMAIN"] = "digital.cabinet-office.gov.uk"
 
-    actual = build_group_dict(
-        "http://api.com", "v3", "test_groups_scope", None, "send_ggroup_data_to_splunk"
+    actual = build_group_dict("http://api.com", "v3", "test_groups_scope", None)
+    expected = (
+        {"group1": "group1@email.com", "group2": "group2@email.com"},
+        json.dumps({"nextPageToken": "first_next_page_token"}),
     )
-    expected = {
-        "group1": "group1@email.com",
-        "group2": "group2@email.com",
-    }
 
     assert actual == expected
 
 
-@patch("script.lambda_client.invoke")
 @patch("script.get_subject_email")
 @patch("script.get_credentials_file")
 @patch("script.create_google_client")
 def test_build_group_dict_middle_of_groups(
-    mock_create_google_client,
-    mock_get_credentials_file,
-    mock_get_subject_email,
-    mock_lambda_invocation,
+    mock_create_google_client, mock_get_credentials_file, mock_get_subject_email,
 ):
 
     mock_create_google_client.return_value = GoogleClientGroupsMockClass
@@ -123,23 +112,18 @@ def test_build_group_dict_middle_of_groups(
         "./lambda/test_assetts/expected_credentials_file.json"
     )
     mock_get_subject_email.return_value = {"Parameter": {"Value": "test_subject_email"}}
-    mock_lambda_invocation.return_value = {"StatusCode": 202}
 
     os.environ["CREDENTIALS"] = "credentials_param"
     os.environ["SUBJECT"] = "subject_email_param"
     os.environ["DOMAIN"] = "digital.cabinet-office.gov.uk"
 
     actual = build_group_dict(
-        "http://api.com",
-        "v3",
-        "test_groups_scope",
-        "first_next_page_token",
-        "send_ggroup_data_to_splunk",
+        "http://api.com", "v3", "test_groups_scope", "first_next_page_token",
     )
-    expected = {
-        "group3": "group3@email.com",
-        "group4": "group4@email.com",
-    }
+    expected = (
+        {"group3": "group3@email.com", "group4": "group4@email.com"},
+        json.dumps({"nextPageToken": "last_next_page_token"}),
+    )
 
     assert actual == expected
 
@@ -162,15 +146,9 @@ def test_build_group_dict_end_of_groups(
     os.environ["DOMAIN"] = "digital.cabinet-office.gov.uk"
 
     actual = build_group_dict(
-        "http://api.com",
-        "v3",
-        "test_groups_scope",
-        "last_next_page_token",
-        "send_ggroup_data_to_splunk",
+        "http://api.com", "v3", "test_groups_scope", "last_next_page_token",
     )
-    expected = {
-        "group5": "group5@email.com",
-    }
+    expected = ({"group5": "group5@email.com"}, None)
 
     assert actual == expected
 
@@ -186,7 +164,7 @@ def test_get_group_info(
             class GoogleClientGet:
                 def get(groupUniqueId):
                     class GoogleClientExecute:
-                        def execute():
+                        def execute(num_retries=0):
                             groups = {
                                 "group1@email.com": {
                                     "kind": "admin#directory#group",
@@ -293,7 +271,6 @@ def test_print_group_info(mock_build_group_dict, mock_get_group_info):
         "v3",
         "admin scope",
         None,
-        "send_ggroup_data_to_splunk",
     )
     sys.stdout = sys.__stdout__
     actual = capturedOutput.getvalue()
