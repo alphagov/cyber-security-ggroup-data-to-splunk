@@ -20,13 +20,13 @@ resource "aws_lambda_function" "send_ggroup_data_to_splunk" {
 }
 
 resource "aws_cloudwatch_event_rule" "send_ggroup_data_to_splunk_every_hour" {
-  name                = "ggroup-to-splunk-24-hours"
-  description         = "Send google groups data to splunk every 24 hours"
+  name                = "ggroup-to-splunk-every-hour"
+  description         = "Send google groups data to splunk every hour"
   schedule_expression = "cron(0 * * * ? *)"
   tags                = local.tags
 }
 
-resource "aws_cloudwatch_event_target" "send_ggroup_data_to_splunk_24_hours_tg" {
+resource "aws_cloudwatch_event_target" "send_ggroup_data_to_splunk_every_hour_tg" {
   rule = aws_cloudwatch_event_rule.send_ggroup_data_to_splunk_every_hour.name
   arn  = aws_lambda_function.send_ggroup_data_to_splunk.arn
 }

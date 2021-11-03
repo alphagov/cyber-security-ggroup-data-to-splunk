@@ -8,3 +8,8 @@ module "ggroup-to-splunk-dev" {
   lambda_timeout      = 900
   domain              = "digital.cabinet-office.gov.uk"
 }
+
+module "lambda-execution-role" {
+  source      = "../../modules/lambda-execution-role"
+  environment = "staging"
+}

@@ -46,12 +46,12 @@ resource "aws_codepipeline" "google-groups-to-splunk" {
     name = "BuildZip"
 
     action {
-      name = "BuildZip"
-      category = "Build"
-      owner = "AWS"
-      provider = "CodeBuild"
-      version = "1"
-      input_artifacts = ["google_groups_to_splunk"]
+      name             = "BuildZip"
+      category         = "Build"
+      owner            = "AWS"
+      provider         = "CodeBuild"
+      version          = "1"
+      input_artifacts  = ["google_groups_to_splunk"]
       output_artifacts = ["lambda_zip"]
       configuration = {
         ProjectName = aws_codebuild_project.build-zip.name
@@ -63,43 +63,43 @@ resource "aws_codepipeline" "google-groups-to-splunk" {
     name = "Deploy"
 
     action {
-      name = "dev-deploy"
-      category = "Build"
-      owner = "AWS"
-      provider = "CodeBuild"
-      version = "1"
-      run_order = 1
+      name            = "dev-deploy"
+      category        = "Build"
+      owner           = "AWS"
+      provider        = "CodeBuild"
+      version         = "1"
+      run_order       = 1
       input_artifacts = ["google_groups_to_splunk", "lambda_zip"]
       configuration = {
         PrimarySource = "google_groups_to_splunk"
-        ProjectName = module.terraform_apply_dev.project_name
+        ProjectName   = module.terraform_apply_dev.project_name
       }
     }
 
     action {
-      name = "prod-deploy"
-      category = "Build"
-      owner = "AWS"
-      provider = "CodeBuild"
-      version = "1"
-      run_order = 2
+      name            = "prod-deploy"
+      category        = "Build"
+      owner           = "AWS"
+      provider        = "CodeBuild"
+      version         = "1"
+      run_order       = 2
       input_artifacts = ["google_groups_to_splunk", "lambda_zip"]
       configuration = {
         PrimarySource = "google_groups_to_splunk"
-        ProjectName = module.terraform_apply_prod.project_name
+        ProjectName   = module.terraform_apply_prod.project_name
       }
     }
     action {
-      name = "prod-co-deploy"
-      category = "Build"
-      owner = "AWS"
-      provider = "CodeBuild"
-      version = "1"
-      run_order = 2
+      name            = "prod-co-deploy"
+      category        = "Build"
+      owner           = "AWS"
+      provider        = "CodeBuild"
+      version         = "1"
+      run_order       = 2
       input_artifacts = ["google_groups_to_splunk", "lambda_zip"]
       configuration = {
         PrimarySource = "google_groups_to_splunk"
-        ProjectName = module.terraform_apply_prod_co.project_name
+        ProjectName   = module.terraform_apply_prod_co.project_name
       }
     }
   }
